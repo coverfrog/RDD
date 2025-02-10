@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class RoundContainer
 {
-    private RoundCore _mCore;
+    // 원형 데이터
     private List<RoundSoData> _mSoDataList;
+
+    // 연산자
+    private RoundCore _mCore;
     
+    // 현재 데이터
     private uint _mRound;
 
     public RoundContainer(List<RoundSoData> soDataList)
     {
-        _mCore = new RoundCore();
+        // 원형 데이터
         _mSoDataList = soDataList;
+
+        // 연산자
+        _mCore = new RoundCore();
+        
+        // 현재 데이터
+        _mRound = 0;
     }
 }
