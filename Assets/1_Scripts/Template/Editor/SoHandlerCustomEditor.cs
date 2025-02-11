@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,20 +6,21 @@ using Object = UnityEngine.Object;
 
 public abstract class SoHandlerCustomEditor<T> : Editor where T : Object
 {
-    protected abstract bool IsHeaderSpace { get; }
-    protected abstract bool IsHeaderView { get; }
+    protected abstract bool IsSoHeaderSpace { get; }
+    protected abstract bool IsSoHeaderView { get; }
     protected abstract bool IsSoClearButton { get; }
     protected abstract bool IsSoFindButton { get; }
     
-    protected abstract string HeaderName { get; }
+    protected abstract string SoHeaderName { get; }
     protected abstract string SoPropertyName { get; }
+    
     
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-        if (IsHeaderSpace) HeaderSpace();
-        if (IsHeaderView) HeaderView();
+        if (IsSoHeaderSpace) HeaderSpace();
+        if (IsSoHeaderView) HeaderView();
         if (IsSoClearButton) SoClearButton();
         if (IsSoFindButton) SoFindButton();
     }
@@ -34,11 +34,11 @@ public abstract class SoHandlerCustomEditor<T> : Editor where T : Object
 
     private void HeaderView()
     {
-        GUILayout.Label(HeaderName);
+        GUILayout.Label(SoHeaderName);
     }
 
     #endregion
-    
+
     #region :: So
 
     private bool SoTryGetProperty(out SerializedObject o, out SerializedProperty property)
