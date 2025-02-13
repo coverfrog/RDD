@@ -11,19 +11,24 @@ namespace Cf.Docs
         Assets,
         Project,
         PersistentData,
+        StreamingAssetsPath,
     }
     
     // Assets
-    //  * Editor : Assets...
-    //  * Build : {Project Name}_Data...
+    //  * Editor : Project Folder / Assets /
+    //  * Build  : Build Folder   / {Project Name}_Data / 
 
     // Project
-    //  * Editor :
-    //  * Build : 
+    //  * Editor : Project Folder /
+    //  * Build  : Build Folder   / {Project Name}_Data /  
     
     // PersistentData
-    //  * Editor : 
-    //  * Build :
+    //  * Editor : Project Folder /
+    //  * Build  : Build Folder   /  
+    
+    // StreamingAssetsPath
+    //  * Editor : Project Folder /
+    //  * Build  : Build Folder   /  
     
     public enum DocsExtend
     {
@@ -56,9 +61,21 @@ namespace Cf.Docs
             // 2. sub
             _mDocsFolderPath = docsRoot switch
             {
-                DocsRoot.Project => Application.dataPath[.."Assets".Length],
-                DocsRoot.Assets => Application.dataPath,
-                DocsRoot.PersistentData => Application.persistentDataPath,
+                DocsRoot.Project =>
+#if UNITY_EDITOR
+                    Application.dataPath[.."Assets".Length],  
+#else
+                    Application.dataPath[.."Application.productName".Length],
+#endif
+                DocsRoot.Assets => 
+                    Application.dataPath,
+                
+                DocsRoot.PersistentData => 
+                    Application.persistentDataPath,
+                
+                DocsRoot.StreamingAssetsPath => 
+                    Application.streamingAssetsPath,
+                
                 _ => "",
             };
             
