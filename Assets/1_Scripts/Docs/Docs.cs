@@ -22,13 +22,28 @@ namespace Cf.Docs
     //  * Editor : Project Folder /
     //  * Build  : Build Folder   / {Project Name}_Data /  
     
-    // PersistentData
-    //  * Editor : Project Folder /
-    //  * Build  : Build Folder   /  
+    // PersistentData 
+    //  * Window 
+    //      * Editor : Pc User Dir / AppData / LocalLow / {Company Name} / {Product Name} /
+    //      * Build  : Pc User Dir / AppData / LocalLow / {Company Name} / {Product Name} /
+    //  * Mac 
+    //      * Editor : Pc User Dir / Library / Cache / {Company Name.Product Name} /
+    //      * Build  : Pc User Dir / Library / Cache / {Company Name.Product Name} /
+    //  * Web
+    //      * Disable
+    //  * Ios
+    //      * Editor : Pc User Dir / Library / Cache / {Company Name.Product Name} /
+    //      * Build  : / var / mobile / Applications / {Program Id} / Documents / 
+    //  * Android
+    //      * Editor : Pc User Dir / AppData / LocalLow / {Company Name} / {Product Name} /
+    //
+    //      Build
+    //          * External : / mnt / sdcard / Android / data / {Bundle Name} / files
+    //          * Internal : / data / data / {Bundle Name} / files
     
     // StreamingAssetsPath
-    //  * Editor : Project Folder /
-    //  * Build  : Build Folder   /  
+    //  * Editor : Project Folder / StreamingAssetsPath
+    //  * Build  : Build Folder   / {Project Name}_Data / StreamingAssetsPath
     
     public enum DocsExtend
     {
@@ -37,36 +52,33 @@ namespace Cf.Docs
         Txt,
     }
 
-    public abstract class Docs
+    public abstract class Docs<T> where T : class, new()
     {
-        private readonly string _mDocsFolderPath;
-        private readonly string _mDocsPath;
-
-        private readonly bool _mIsCreateAuto;
+        protected readonly string DocsPath;
         
+        private readonly bool _mIsFileExist;
+        
+        private readonly string _mDocsFolderPath;
+
         protected Docs(DocsRoot docsRoot, string[] subPathArr, string fileName, DocsExtend extend, bool isCreateAuto = true)
         {
             // file name
             if (string.IsNullOrEmpty(fileName))
             {
-                Debug.LogError("[Docs] File Name Is Null Or Empty");
+                FilePathErrorLog(0);
                 return;
             }
-            
-            // option
-            _mIsCreateAuto = isCreateAuto;
 
+            var a = Application.dataPath[..$"{Application.productName}_Data".Length];
+            
             // docs folder path combine
             // 1. root
             // 2. sub
             _mDocsFolderPath = docsRoot switch
             {
                 DocsRoot.Project =>
-#if UNITY_EDITOR
-                    Application.dataPath[.."Assets".Length],  
-#else
-                    Application.dataPath[.."Application.productName".Length],
-#endif
+                    Directory.GetParent(Application.dataPath)?.FullName,
+                
                 DocsRoot.Assets => 
                     Application.dataPath,
                 
@@ -78,7 +90,13 @@ namespace Cf.Docs
                 
                 _ => "",
             };
-            
+
+            if (_mDocsFolderPath == null)
+            {
+                FilePathErrorLog(2);
+                return;
+            }
+
             if (subPathArr != null)
             {
                 string subPath = subPathArr.Aggregate(Path.Combine);
@@ -92,50 +110,80 @@ namespace Cf.Docs
             string docsFullName = $"{fileName}.{extend.ToString().ToLower()}";
             
             // result : docs path combine
-            _mDocsPath = Path.Combine(_mDocsFolderPath, docsFullName);
+            DocsPath = Path.Combine(_mDocsFolderPath, docsFullName);
 
             // file exist 
-            if (File.Exists(_mDocsPath))
+            if (File.Exists(DocsPath))
             {
+                _mIsFileExist = true;
+                
                 return;
             }
 
             if (!isCreateAuto)
             {
-                Debug.LogError($"[Docs] Docs Path \"{_mDocsPath}\" Is Not Exist");
+                FilePathErrorLog(1);
             }
 
             // create
-            Create();
+            Create(null);
+
+            _mIsFileExist = true;
         }
 
-        protected abstract string CreateDocsFile();
+        private void FilePathErrorLog(int errorCode)
+        {
+            string msg = errorCode switch
+            {
+                0 => $"[Docs] File Name Is Null Or Empty",
+                1 => $"[Docs] Docs Path \"{DocsPath}\" Is Not Exist",
+                2 => $"[Docs] Root Path Don't Find",
+                _ => ""
+            };
+            
+            Debug.LogError(msg);
+        }
+
+        protected abstract string CreateDocsFile(T t);
         
-        private void Create()
+        private void Create(T t)
         {
             if (!Directory.Exists(_mDocsFolderPath))
             {
                 Directory.CreateDirectory(_mDocsFolderPath);
             }
 
-            using FileStream stream = new FileStream(_mDocsPath, FileMode.Create, FileAccess.Write);
+            using FileStream stream = new FileStream(DocsPath, FileMode.Create, FileAccess.Write);
             using (StreamWriter writer = new StreamWriter(stream, Encoding.UTF8))
             {
-                writer.Write(CreateDocsFile());
+                writer.Write(CreateDocsFile(t));
                 writer.Close();
             }
                 
             stream.Close();
         }
 
-        public virtual void Read()
+        protected abstract T ReadDocsFile();
+
+        public bool Read(out T docsStruct)
         {
+            if (!_mIsFileExist)
+            {
+                FilePathErrorLog(1);
+
+                docsStruct = new T();
+                
+                return false;
+            }
+
+            docsStruct = ReadDocsFile();
             
+            return true;
         }
 
-        public virtual void Write()
+        public void Write(T t)
         {
-            
+            Create(t);
         }
     }
 }
