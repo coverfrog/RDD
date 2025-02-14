@@ -7,12 +7,12 @@ using UnityEngine.Networking;
 
 public class SimpleHttpClientSample : MonoBehaviour
 {
-    [Header("Option")]
-    [SerializeField] private string mParam = "debug";
+    [Header("Option")] 
+    [SerializeField] private bool mUseLog;
     
     [Header("Http")] 
     [SerializeField] private int mHttpPort = 20000;
-    [SerializeField] private string mSubPath = "api";
+    [SerializeField] private string mSubPath = "/api";
     
     private bool _mRequestRunning;
 
@@ -36,24 +36,49 @@ public class SimpleHttpClientSample : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Request();
+            Get("testStr");
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Get("testInt");
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Get("testFloat");
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            Get("testBoolean");
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            Get("not");
         }
     }
 
-    private void Request()
+    private void Get(string str)
     {
         if (_mRequestRunning)
         {
             return;
         }
 
-        StartCoroutine(CoRequest(Debug.Log));
+        StartCoroutine(CoRequest(str, (msg)  =>
+        {
+            if (mUseLog)
+            {
+                Debug.Log(msg);
+            }
+        }));
     }
 
-    private IEnumerator CoRequest(Action<string> callback)
+    private IEnumerator CoRequest(string param, Action<string> callback)
     {
-        string paramLower = mParam.ToLower();
-        string url = $"http://127.0.01:{mHttpPort}{mSubPath}?{paramLower}={paramLower}";
+        string url = $"http://127.0.01:{mHttpPort}{mSubPath}?{param}={param}";
 
         using UnityWebRequest request = UnityWebRequest.Get(url);
         

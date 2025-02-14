@@ -26,7 +26,6 @@ namespace Cf.Docs
                 OmitXmlDeclaration = false         
             };
             
-            // writer
             using DocsUtf8StringWriter sw = new DocsUtf8StringWriter();
             using (XmlWriter writer = XmlWriter.Create(sw, settings))
             {

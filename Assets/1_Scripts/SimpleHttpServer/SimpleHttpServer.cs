@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
+using Unity.Plastic.Newtonsoft.Json;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine;
 
-public class SimpleHttpServer : MonoBehaviour
+public abstract class SimpleHttpServer<T> : MonoBehaviour where T: class, new()
 {
     [Header("Option")] 
     [SerializeField] private bool mAutoStart;
@@ -14,7 +19,7 @@ public class SimpleHttpServer : MonoBehaviour
     [SerializeField] private string mSubPath = "/api";
 
     [Header("Info")] 
-    [SerializeField] private SimpleHttpServerStructSample simpleData;
+    [SerializeField] protected T mDataClass;
     
     private HttpListener _mHttpListener;
     private Thread _mHttpThread;
@@ -47,7 +52,7 @@ public class SimpleHttpServer : MonoBehaviour
         Run();
     }
 
-    private void Run()
+    public void Run()
     {
         if (_mIsRunning)
         {
@@ -88,6 +93,47 @@ public class SimpleHttpServer : MonoBehaviour
         }
     }
 
+    private string QueryResponse(NameValueCollection query)
+    {
+        // get fields
+        FieldInfo[] fieldInfoArr = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        
+        // temp j
+        JObject jObj = new JObject();
+        
+        // find field
+        foreach (string key in query.AllKeys)
+        {
+            foreach (FieldInfo fi in fieldInfoArr)
+            {
+                if (!string.Equals(key, fi.Name))
+                {
+                    continue;
+                }
+
+                // value to token
+                object value = fi.GetValue(mDataClass);
+                JToken token = JToken.FromObject(value);
+
+                // token check
+                if (token is not JValue jValue)
+                {
+                    break;
+                }
+
+                if (jValue.Value == null)
+                {
+                    break;
+                }
+
+                // add
+                jObj.Add(key, token);
+            }
+        }
+        
+        return jObj.ToString(Formatting.Indented);
+    }
+
     private void ListenThreadPool(HttpListenerContext context)
     {
         // client send path
@@ -100,18 +146,13 @@ public class SimpleHttpServer : MonoBehaviour
         if (path.StartsWith(mSubPath))
         {
             NameValueCollection query = context.Request.QueryString;
-            
-            foreach (string key in query.AllKeys)
-            {
-                string value = query[key];
 
-                responseString += $"{value} = {value}\n";
-            }
+            responseString = QueryResponse(query);
         }
         
         else
         {
-            responseString = "404 Not Found";
+            responseString = "404 Not Found, Sub Path Check";
         }
 
         byte[] buffer = Encoding.UTF8.GetBytes(responseString);
