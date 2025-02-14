@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -56,9 +55,9 @@ namespace Cf.Docs
     {
         protected readonly string DocsPath;
         
-        private readonly bool _mIsFileExist;
-        
         private readonly string _mDocsFolderPath;
+        
+        private bool _mIsFileExist;
 
         protected Docs(DocsRoot docsRoot, string[] subPathArr, string fileName, DocsExtend extend, bool isCreateAuto = true)
         {
@@ -69,8 +68,6 @@ namespace Cf.Docs
                 return;
             }
 
-            var a = Application.dataPath[..$"{Application.productName}_Data".Length];
-            
             // docs folder path combine
             // 1. root
             // 2. sub
@@ -128,7 +125,6 @@ namespace Cf.Docs
             // create
             Create(null);
 
-            _mIsFileExist = true;
         }
 
         private void FilePathErrorLog(int errorCode)
@@ -161,6 +157,8 @@ namespace Cf.Docs
             }
                 
             stream.Close();
+            
+            _mIsFileExist = true;
         }
 
         protected abstract T ReadDocsFile();
@@ -184,6 +182,21 @@ namespace Cf.Docs
         public void Write(T t)
         {
             Create(t);
+        }
+
+        public void Delete()
+        {
+            if (!_mIsFileExist)
+            {
+                return;
+            }
+
+            File.Delete(DocsPath);
+        }
+
+        public bool IsExist()
+        {
+            return File.Exists(DocsPath);
         }
     }
 }

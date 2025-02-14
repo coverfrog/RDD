@@ -1,6 +1,4 @@
-using Cf.Docs;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cf.Docs
@@ -14,6 +12,8 @@ namespace Cf.Docs
                 null,
                 "xml0");
 
+            xml0.Delete();
+            
             yield return new WaitForSeconds(1.0f);
             
             xml0.Read(out var t);
