@@ -7,12 +7,16 @@ namespace Cf.Docs
 {
     public enum DocsRoot
     {
-        Assets,
+        Assets = 0,
         Project,
         PersistentData,
         StreamingAssetsPath,
+        
+        EditorAssetsBuildProject = 100,
     }
-    
+
+    #region :: Path 
+
     // Assets
     //  * Editor : Project Folder / Assets /
     //  * Build  : Build Folder   / {Project Name}_Data / 
@@ -43,7 +47,8 @@ namespace Cf.Docs
     // StreamingAssetsPath
     //  * Editor : Project Folder / StreamingAssetsPath
     //  * Build  : Build Folder   / {Project Name}_Data / StreamingAssetsPath
-    
+    #endregion
+
     public enum DocsExtend
     {
         Xml,
@@ -84,6 +89,14 @@ namespace Cf.Docs
                 
                 DocsRoot.StreamingAssetsPath => 
                     Application.streamingAssetsPath,
+                
+                
+                DocsRoot.EditorAssetsBuildProject =>
+#if UNITY_EDITOR
+                    Application.dataPath,
+#else
+                    Directory.GetParent(Application.dataPath)?.FullName,
+#endif
                 
                 _ => "",
             };
