@@ -6,8 +6,6 @@ using Cf.Pattern;
 
 public class RddManager : GenericSingleton<RddManager>
 {
-    public RddSceneHandler SceneHandler { get; set; }
-    
     // call, project begin
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void ProjectBegin()
@@ -17,7 +15,7 @@ public class RddManager : GenericSingleton<RddManager>
 
     private void Start()
     {
-        // on 
-        SceneHandler?.OnProjectBegin();
+        // call other
+        _ = InputManager.Instance;
     }
 }
