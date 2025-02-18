@@ -25,7 +25,7 @@ namespace Cf.Pattern
         }
 
         // awake
-        protected void Awake()
+        protected virtual void Awake()
         {
             if (_mInstance != null)
             {
