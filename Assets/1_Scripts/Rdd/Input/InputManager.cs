@@ -6,14 +6,23 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class InputManager : GenericSingleton<InputManager>, IInputCommandSender, IPlayerInput
+public class InputManager : Singleton<InputManager>, IInputCommandSender, IPlayerInputSender
 {
     private readonly List<IInputCommandReceiver> _mCommandReceiverList = new List<IInputCommandReceiver>();
-
-    private readonly Queue<Vector2> _mOnMoveQueue = new Queue<Vector2>();
+    private readonly List<IPlayerInputReceiver> _mOPlayerInputReceiverList = new List<IPlayerInputReceiver>();
     
     #region :: Player Input
 
+    public void OnPlayerInputSub(IPlayerInputReceiver receiver)
+    {
+        _mOPlayerInputReceiverList.Add(receiver);
+    }
+
+    public void OnPlayerInputUnSub(IPlayerInputReceiver receiver)
+    {
+        _mOPlayerInputReceiverList.Remove(receiver);
+    }
+    
     public void OnMove(InputValue inputValue)
     {
         OnMove(inputValue.Get<Vector2>());
@@ -21,29 +30,22 @@ public class InputManager : GenericSingleton<InputManager>, IInputCommandSender,
 
     public void OnMove(Vector2 value)
     {
-        Debug.Log(value);
-        
-        _mOnMoveQueue.Enqueue(value);
+        foreach (IPlayerInputReceiver receiver in _mOPlayerInputReceiverList)
+        {
+            receiver.OnMove(value);
+        }
     }
 
     #endregion
 
-    private void Update()
-    {
-        if (_mOnMoveQueue.Count > 0)
-        {
-            
-        }
-    }
-
     #region :: IInputCommand
 
-    public void OnSub(IInputCommandReceiver receiver)
+    public void OnInputCommandSub(IInputCommandReceiver receiver)
     {
         _mCommandReceiverList.Add(receiver);
     }
 
-    public void OnUnSub(IInputCommandReceiver receiver)
+    public void OnInputCommandUnSub(IInputCommandReceiver receiver)
     {
         _mCommandReceiverList.Remove(receiver);
     }
@@ -57,4 +59,5 @@ public class InputManager : GenericSingleton<InputManager>, IInputCommandSender,
     }
 
     #endregion
+  
 }

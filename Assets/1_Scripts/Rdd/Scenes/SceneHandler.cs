@@ -3,30 +3,36 @@ using UnityEngine;
 
 public abstract class SceneHandler : MonoBehaviour, IInputCommandReceiver
 {
+    #region :: Unity
+
     private void OnEnable()
     {
-        Sub(InputManager.Instance);
+        InputCommandSub(InputManager.Instance);
     }
 
     private void OnDisable()
     {
-        UnSub(InputManager.Instance);
+        InputCommandUnSub(InputManager.Instance);
     }
-
-    #region :: IInputCommand
-
-    public void Sub(IInputCommandSender sender)
-    {
-        sender.OnSub(this);
-    }
-
-    public void UnSub(IInputCommandSender sender)
-    {
-        sender.OnUnSub(this);
-    }
-
-    public abstract void OnSendCommand(InputCommandName commandName);
 
     #endregion
 
+    #region :: IInputCommand
+
+    public void InputCommandSub(IInputCommandSender sender)
+    {
+        sender?.OnInputCommandSub(this);
+    }
+
+    public void InputCommandUnSub(IInputCommandSender sender)
+    {
+        sender?.OnInputCommandUnSub(this);
+    }
+
+    public void OnSendCommand(InputCommandName commandName)
+    {
+        
+    }
+
+    #endregion
 }

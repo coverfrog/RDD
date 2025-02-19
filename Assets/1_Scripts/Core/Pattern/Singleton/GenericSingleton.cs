@@ -3,31 +3,38 @@ using UnityEngine;
 
 namespace Cf.Pattern
 {
-    public abstract class GenericSingleton<T> : MonoBehaviour where T : Component
+    public abstract class Singleton<T> : MonoBehaviour where T : Component
     {
-        // ins
+        private static object _lock = new object();
+
+        private static bool _isRunning = true;
+        
         private static T _mInstance;
 
         public static T Instance
         {
             get
             {
-                if (_mInstance != null) return _mInstance;
+                lock (_lock)
+                {
+                    if (!_isRunning) return null;
+                    
+                    if (_mInstance != null) return _mInstance;
 
-                _mInstance = FindAnyObjectByType<T>();
+                    _mInstance = FindAnyObjectByType<T>();
                 
-                if (_mInstance != null) return _mInstance;
+                    if (_mInstance != null) return _mInstance;
 
-                _mInstance = new GameObject(typeof(T).Name).AddComponent<T>();
+                    _mInstance = new GameObject(typeof(T).Name).AddComponent<T>();
 
-                return _mInstance;
+                    return _mInstance;
+                }
             }
         }
 
-        // awake
         protected virtual void Awake()
         {
-            if (_mInstance != null)
+            if (_mInstance != null && _mInstance != this)
             {
                 Destroy(gameObject);
             }
@@ -37,6 +44,11 @@ namespace Cf.Pattern
                 _mInstance = this as T;
                 DontDestroyOnLoad(gameObject);
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isRunning = false;
         }
     }
 }
