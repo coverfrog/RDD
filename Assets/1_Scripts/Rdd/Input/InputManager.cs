@@ -95,11 +95,38 @@ public class InputManager : Singleton<InputManager>, IInputReceiver
         }
 
         // to value
-        Data.ray.currentGroundHit = nearGroundHit;
-        
         Data.move.isMovePointInput = true;
         Data.move.movePoint = nearGroundHit.point;
     }
 
     #endregion
+
+    #region :: Attack
+
+    public void OnAttack(InputValue inputValue)
+    {
+        OnAttack(inputValue.Get<float>());
+    }
+
+    public void OnAttack(float value)
+    {
+        
+    }
+    
+    #endregion
+
+    #region :: Click
+
+    public void OnClick(InputValue inputValue)
+    {
+        OnClick(inputValue.Get<float>());
+    }
+
+    public void OnClick(float value)
+    {
+        Data.attack.isAttackMouseInput = Mathf.Approximately(value, 1);
+    }
+    
+    #endregion
+
 }
