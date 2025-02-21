@@ -1,45 +1,49 @@
 using System;
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Debug = UnityEngine.Debug;
 
-public class PlayerCtrl : MonoBehaviour, IPlayerInputReceiver
+public class PlayerCtrl : MonoBehaviour
 {
     [Header("Option")] 
-    [SerializeField] [Min(0.0f)] private float mMoveSpeed = 3.0f;
+    [SerializeField] private MoveFuncType mMoveFuncType;
     
-    [Header("Reference")]
-    [SerializeField] private PlayerMove mPlayerMove;
+    [Header("Status")] 
+    [SerializeField] [Min(0.0f)] private float mMoveSpeed = 3.0f;
+
+    private IMove _mIMove;
     
     #region :: Unity
 
-    private void OnEnable()
+    private void Awake()
     {
-        PlayerInputSub(InputManager.Instance);
+        OnInitMoveFuncType();
     }
 
-    private void OnDisable()
+    private void Update()
     {
-        PlayerInputUnSub(InputManager.Instance);
+        _mIMove?.OnMove(InputManager.Instance.Data.move, mMoveSpeed);
     }
 
     #endregion
-
-    #region :: PlayerInput
-
-    public void OnMove(Vector2 value)
-    {
-        mPlayerMove?.OnMove(value, mMoveSpeed);
-    }
-
-    public void PlayerInputSub(IPlayerInputSender sender)
-    {
-        sender?.OnPlayerInputSub(this);
-    }
-
-    public void PlayerInputUnSub(IPlayerInputSender sender)
-    {
-        sender?.OnPlayerInputUnSub(this);
-    }
     
+    #region :: On Change Func Type
+
+    private void OnInitMoveFuncType()
+    {
+        if (TryGetComponent(out PlayerMoveToDir toDir)) Destroy(toDir);
+        if (TryGetComponent(out PlayerMoveToPoint toPoint)) Destroy(toPoint);
+        
+        _mIMove = mMoveFuncType switch
+        {
+            MoveFuncType.ToDir => 
+                gameObject.AddComponent<PlayerMoveToDir>(),
+            MoveFuncType.ToPoint =>
+                gameObject.AddComponent<PlayerMoveToPoint>(),
+            _ => 
+                throw new ArgumentOutOfRangeException()
+        };
+    }
+
     #endregion
 }

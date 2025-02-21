@@ -6,58 +6,100 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class InputManager : Singleton<InputManager>, IInputCommandSender, IPlayerInputSender
+public class InputManager : Singleton<InputManager>, IInputReceiver
 {
-    private readonly List<IInputCommandReceiver> _mCommandReceiverList = new List<IInputCommandReceiver>();
-    private readonly List<IPlayerInputReceiver> _mOPlayerInputReceiverList = new List<IPlayerInputReceiver>();
+    public PlayerInputData Data { get; private set; } = new PlayerInputData();
+
+    private LayerMask _mGroundLayer;
+
+    private int _mRayHitMaxCount;
+    private float _mRayHitDistance;
     
-    #region :: Player Input
-
-    public void OnPlayerInputSub(IPlayerInputReceiver receiver)
-    {
-        _mOPlayerInputReceiverList.Add(receiver);
-    }
-
-    public void OnPlayerInputUnSub(IPlayerInputReceiver receiver)
-    {
-        _mOPlayerInputReceiverList.Remove(receiver);
-    }
+    private Ray _mRay;
+    private RaycastHit[] _mRayHits;
     
-    public void OnMove(InputValue inputValue)
-    {
-        OnMove(inputValue.Get<Vector2>());
-    }
+    #region :: Unity
 
-    public void OnMove(Vector2 value)
+    protected override void Awake()
     {
-        foreach (IPlayerInputReceiver receiver in _mOPlayerInputReceiverList)
-        {
-            receiver.OnMove(value);
-        }
+        // singleton
+        base.Awake();
+        
+        // layer
+        _mRayHitMaxCount = 20;
+        _mRayHitDistance = 500.0f;
+        
+        _mGroundLayer = 1 << 11;
+        _mRay = new Ray();
+        _mRayHits = new RaycastHit[_mRayHitMaxCount];
     }
 
     #endregion
+    
+    #region :: Move
 
-    #region :: IInputCommand
-
-    public void OnInputCommandSub(IInputCommandReceiver receiver)
+    public void OnMoveDir(InputValue inputValue)
     {
-        _mCommandReceiverList.Add(receiver);
+        OnMoveDir(inputValue.Get<Vector2>());
     }
 
-    public void OnInputCommandUnSub(IInputCommandReceiver receiver)
+    public void OnMoveDir(Vector2 value)
     {
-        _mCommandReceiverList.Remove(receiver);
+        Data.move.isMoveDirInput = value.sqrMagnitude > 0;
+        Data.move.moveDirNormal = new Vector3(value.x, 0, value.y).normalized;
+    }
+    
+    #endregion
+
+    #region :: RightClick
+
+    public void OnRightClick(InputValue inputValue)
+    {
+        OnRightClick(inputValue.Get<float>());
     }
 
-    public void SendCommand(InputCommandName commandName)
+    public void OnRightClick(float value)
     {
-        foreach (IInputCommandReceiver receiver in _mCommandReceiverList)
+        Data.common.isRightClickInput = Mathf.Approximately(value, 1);
+        Data.move.isMovePointInput = false;
+            
+        if (!Data.common.isRightClickInput)
         {
-            receiver.OnSendCommand(commandName);
+            return;
         }
+
+        // ray
+        _mRay = CamManager.Instance.MainCam.ScreenPointToRay(Input.mousePosition);
+
+        int rayHitCount = Physics.RaycastNonAlloc(_mRay, _mRayHits, _mRayHitDistance, _mGroundLayer);
+        if (rayHitCount <= 0)
+        {
+            return;
+        }
+
+        // hit
+        RaycastHit nearGroundHit = _mRayHits[0];
+        for (int i = 1; i < rayHitCount; i++) 
+        {
+            if (_mRayHits[i].distance < nearGroundHit.distance)
+            {
+                nearGroundHit = _mRayHits[i];
+            }
+        }
+        
+        // col
+        Collider col = nearGroundHit.collider;
+        if (!col)
+        {
+            return;
+        }
+
+        // to value
+        Data.ray.currentGroundHit = nearGroundHit;
+        
+        Data.move.isMovePointInput = true;
+        Data.move.movePoint = nearGroundHit.point;
     }
 
     #endregion
-  
 }
