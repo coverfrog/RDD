@@ -48,6 +48,7 @@ namespace Cf.Pattern
 
         private void OnApplicationQuit()
         {
+            _mInstance = null;
             _isRunning = false;
         }
     }
