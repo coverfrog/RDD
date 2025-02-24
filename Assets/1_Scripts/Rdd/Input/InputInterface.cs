@@ -1,40 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
-
-#region :: Data
-
-[System.Serializable]
-public class PlayerInputData
-{
-    public PlayerInputCommonData common = new PlayerInputCommonData();
-    public PlayerInputMoveData move = new PlayerInputMoveData();
-    public PlayerInputAttackData attack = new PlayerInputAttackData();
-}
-
-[System.Serializable]
-public class PlayerInputCommonData
-{
-    public bool isRightClickInput;
-}
-
-[System.Serializable]
-public class PlayerInputMoveData
-{
-    public bool isMoveDirInput;
-    public bool isMovePointInput;
-
-    public Vector3 moveDirNormal;
-    public Vector3 movePoint;
-}
-
-[System.Serializable]
-public class PlayerInputAttackData
-{
-    public bool isAttackMouseInput;
-}
-
-#endregion
 
 #region :: Receiver
 
@@ -47,21 +12,13 @@ public interface IInputReceiver :
     
 }
 
-
 #endregion
 
 #region :: Move
 
-public enum MoveFuncType
-{
-    ToNone,
-    ToDir,
-    ToPoint,
-}
-
 public interface IMove 
 {
-    public void OnMove(PlayerInputMoveData data, float speed);
+    public void OnMove(PlayerInputMoveData data, UnitMoveOption option);
 }
 
 public interface IMoveDirInput 
@@ -75,17 +32,9 @@ public interface IMoveDirInput
 
 #region :: Attack
 
-public enum AttackFuncType
-{
-    ToNone,
-    ToBodySlam,
-    ToFist,
-    ToShortSward,
-}
-
 public interface IAttack
 {
-    public void OnAttack(PlayerInputAttackData data);
+    public void OnAttack(PlayerInputAttackData data, UnitAttackOption option);
 }
 
 public interface IAttackInput

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerMoveToPoint : MonoBehaviour, IMove
+public class UnitMoveToPoint : MonoBehaviour, IMove
 {
     private const float EndDistance = 0.1f;
 
@@ -31,7 +31,7 @@ public class PlayerMoveToPoint : MonoBehaviour, IMove
         transform.position += dir * (Time.deltaTime * _mSpeed);
     }
     
-    public void OnMove(PlayerInputMoveData data, float speed)
+    public void OnMove(PlayerInputMoveData data, UnitMoveOption option)
     {
         if (!data.isMovePointInput)
         {
@@ -40,6 +40,6 @@ public class PlayerMoveToPoint : MonoBehaviour, IMove
 
         _mIsMoving = true;
         _mMovePoint = data.movePoint;
-        _mSpeed = speed;
+        _mSpeed = option.moveSpeed;
     }
 }
