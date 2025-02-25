@@ -5,11 +5,11 @@ using Debug = UnityEngine.Debug;
 
 public abstract class UnitCtrl : MonoBehaviour
 {
-    [Header("Type")] 
+    [Header("L0 : Type")] 
     [SerializeField] private UnitMoveType mMoveFuncType;
     [SerializeField] private UnitAttackType mAttackFuncType;
     
-    [Header("Option")] 
+    [Header("L0 : Option")] 
     [SerializeField] private UnitMoveOption mMoveOption;
     [SerializeField] private UnitAttackOption mAttackOption;
 

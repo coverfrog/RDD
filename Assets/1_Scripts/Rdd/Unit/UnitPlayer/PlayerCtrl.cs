@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class PlayerCtrl : UnitCtrl
 {
-    [Header("Id")] 
+    [Header("L1 : Option")] 
     [SerializeField] private string mPlayerUnityId;
     
     #region :: Unit Type
@@ -14,13 +14,9 @@ public sealed class PlayerCtrl : UnitCtrl
 
     #region :: Player Unity Id
 
-    private static int CallIdx = 0;
-
     private void SetPlayerUnityId(string playerUnityId)
     {
         mPlayerUnityId = playerUnityId;
-
-        CallIdx++;
     }
 
     public string PlayerUnityId => mPlayerUnityId;
@@ -31,7 +27,7 @@ public sealed class PlayerCtrl : UnitCtrl
 
     private void Start()
     {
-        SetPlayerUnityId(CallIdx.ToString());
+        SetPlayerUnityId(DateTime.Now.ToString("T"));
     }
 
     #endregion
