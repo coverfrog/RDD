@@ -15,8 +15,18 @@ MonoBehaviour:
   m_GroupName: Scene Assets
   m_GUID: 77201345e53db884991089dae143fb95
   m_SerializeEntries:
+  - m_GUID: 6fdc7480f2abb044580c3f27c40b05ac
+    m_Address: Rdd_Scene_MainMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b7bd832514facb04890deddd5256c2ac
-    m_Address: Assets/0_Scenes/Rdd_1_MainMenu
+    m_Address: Rdd_Scene_Intro
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9ea18988dfe47b4789ea1679b4d1c57
+    m_Address: Rdd_Scene_Game
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
