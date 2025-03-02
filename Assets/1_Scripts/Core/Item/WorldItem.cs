@@ -28,7 +28,7 @@ namespace Cf.Item
         
         public void SetItemIndex(ulong itemIndex)
         {
-            Debug.Log("v1");
+            
         }
         
         public void SetItemIndex(ulong itemIndex, object o)

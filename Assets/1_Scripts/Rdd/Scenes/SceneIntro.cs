@@ -8,26 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneIntro : SceneHandler
 {
-    private SceneAddressableLoader _loader;
-    
-    protected override IEnumerator Start()
+    public static void SceneToMainMenu(UIIntroSelector selector)
     {
-        yield return base.Start();
-
-        _loader = AddressableLoad(
-            "Rdd_Scene_MainMenu",
-            null,
-            null,
-            null,
-            LoadSceneMode.Additive,
-            false);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            _loader.Active();
-        }
+        AddressableLoad("Rdd_Scene_Game", null, null, null);
     }
 }

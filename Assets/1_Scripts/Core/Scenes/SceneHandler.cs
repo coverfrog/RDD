@@ -42,7 +42,7 @@ namespace Cf.Scenes
 
         private static void OnAddressableLoadDestroyed(AsyncOperationHandle handle)
         {
-            
+            OnAddressableLoaderListRemove();
         }
         
         private static void OnAddressableLoadCompletedTypeless(AsyncOperationHandle handle)
@@ -52,17 +52,36 @@ namespace Cf.Scenes
 
         private static void OnAddressableLoadCompleted(AsyncOperationHandle<SceneInstance> handle)
         {
-            
+            OnAddressableLoaderListRemove();
         }
-        
+
+        private static void OnAddressableLoaderListRemove()
+        {
+            AddressableLoaderList.Clear();
+        }
+
+   
+
+        #endregion
+
+        #region :: Scene
+
         protected static void SceneActive(AsyncOperationHandle<SceneInstance> handle)
         {
             handle.Result.ActivateAsync().allowSceneActivation = true;
         }
 
+        public static void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit(); 
+#endif
+        }
+
         #endregion
-
-
+        
         protected virtual IEnumerator Start()
         {
             yield break;

@@ -3,8 +3,8 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Unity.Plastic.Newtonsoft.Json;
-using Unity.Plastic.Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Cf.SimpleHttpServer

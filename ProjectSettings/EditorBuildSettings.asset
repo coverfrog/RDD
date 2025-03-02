@@ -6,14 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/0_Scenes/Rdd_Game.unity
-    guid: f9ea18988dfe47b4789ea1679b4d1c57
-  - enabled: 1
-    path: Assets/0_Scenes/Rdd_Intro.unity
+    path: Assets/0_Scenes/Rdd_Scene_MainMenu.unity
     guid: b7bd832514facb04890deddd5256c2ac
-  - enabled: 1
-    path: Assets/0_Scenes/Rdd_MainMenu.unity
-    guid: 6fdc7480f2abb044580c3f27c40b05ac
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: cd7d043c9e3721a418b6d6bcb90e62f5, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
