@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class InputActionMove : InputActionBase
+    public class InputActionDirection : InputActionBase
     {
         public event Action<Vector3> OnMove;
 

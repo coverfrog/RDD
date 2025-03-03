@@ -2,28 +2,29 @@ using System;
 using Cf.Inputs;
 using Cf.Pattern;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class InputManager : Singleton<InputManager>
 {
     [Header("Reference")]
-    [SerializeField] private InputActionMove mMove;
+    [SerializeField] private InputActionDirection mDirection;
 
-    public event Action<Vector3> OnMove;
+    public InputData Data { get; private set; }
 
-    private void OnMoveInput(Vector3 vector3)
+    private void OnDirectionInput(Vector3 vector3)
     {
-        OnMove?.Invoke(vector3);
+        Data.directionVector3 = vector3;
     }
 
     protected override void Awake()
     {
         base.Awake();
 
-        mMove = gameObject.AddComponent<InputActionMove>();
+        mDirection = gameObject.AddComponent<InputActionDirection>();
     }
 
     private void Start()
     {
-        mMove.OnMove += OnMoveInput;
+        mDirection.OnMove += OnDirectionInput;
     }
 }
