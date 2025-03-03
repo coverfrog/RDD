@@ -60,8 +60,6 @@ namespace Cf.Scenes
             AddressableLoaderList.Clear();
         }
 
-   
-
         #endregion
 
         #region :: Scene
