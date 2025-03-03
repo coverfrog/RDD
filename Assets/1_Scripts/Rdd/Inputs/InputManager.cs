@@ -9,7 +9,7 @@ public class InputManager : Singleton<InputManager>
     [Header("Reference")]
     [SerializeField] private InputActionDirection mDirection;
 
-    public InputData Data { get; private set; }
+    public InputData Data { get; private set; } = new InputData();
 
     private void OnDirectionInput(Vector3 vector3)
     {
