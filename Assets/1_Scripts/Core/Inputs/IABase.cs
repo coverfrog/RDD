@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.Utilities;
 
 namespace Cf.Inputs
 {
-    public abstract class InputActionBase : MonoBehaviour
+    public abstract class IaBase : MonoBehaviour
     {
         [SerializeField] protected InputAction mInputAction;
 

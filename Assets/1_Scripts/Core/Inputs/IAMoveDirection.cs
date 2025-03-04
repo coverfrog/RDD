@@ -4,14 +4,14 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class InputActionDirection : InputActionBase
+    public class IaMoveDirection : IaBase
     {
-        public event Action<Vector3> OnMove;
+        public event Action<Vector3> OnMoveDirection;
 
         private void Awake()
         {
             // init
-            mInputAction = new InputAction("Move", InputActionType.Value);
+            mInputAction = new InputAction("Move Direction");
 
             // bind
             mInputAction.AddBinding("<Gamepad>/leftStick");
@@ -31,7 +31,7 @@ namespace Cf.Inputs
         {
             Vector2 value = callbackContext.ReadValue<Vector2>().normalized;
 
-            OnMove?.Invoke(new Vector3(value.x, 0 ,value.y));
+            OnMoveDirection?.Invoke(new Vector3(value.x, 0 ,value.y));
         }
     }
 }

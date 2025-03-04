@@ -7,7 +7,8 @@ using UnityEngine.Serialization;
 public class InputManager : Singleton<InputManager>
 {
     [Header("Reference")]
-    [SerializeField] private InputActionDirection mDirection;
+    [SerializeField] private IaMoveDirection mMoveDirection;
+    [SerializeField] private IaMovePoint mMovePoint;
 
     public InputData Data { get; private set; } = new InputData();
 
@@ -20,11 +21,12 @@ public class InputManager : Singleton<InputManager>
     {
         base.Awake();
 
-        mDirection = gameObject.AddComponent<InputActionDirection>();
+        mMoveDirection = gameObject.AddComponent<IaMoveDirection>();
+        mMovePoint = gameObject.AddComponent<IaMovePoint>();
     }
 
     private void Start()
     {
-        mDirection.OnMove += OnDirectionInput;
+        mMoveDirection.OnMoveDirection += OnDirectionInput;
     }
 }
