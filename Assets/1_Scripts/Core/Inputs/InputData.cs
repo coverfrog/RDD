@@ -7,6 +7,7 @@ namespace Cf.Inputs
     [Serializable]
     public class InputData
     {
-        public Vector3 directionVector3;
+        public Vector3 moveDirectionVector3;
+        public Vector2 rightClickVector2;
     }
 }

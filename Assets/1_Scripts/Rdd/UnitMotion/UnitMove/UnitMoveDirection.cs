@@ -7,7 +7,7 @@ public class UnitMoveDirection : MonoBehaviour
     
     private void Update()
     {
-        OnMove(InputManager.Instance.Data.directionVector3, data.moveSpeed);
+        OnMove(InputManager.Instance.Data.moveDirectionVector3, data.moveSpeed);
     }
 
     private void OnMove(Vector3 dir, float speed)
