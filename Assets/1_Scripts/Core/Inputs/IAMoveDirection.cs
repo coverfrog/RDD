@@ -6,7 +6,7 @@ namespace Cf.Inputs
 {
     public class IaMoveDirection : IaBase
     {
-        public event Action<Vector3> OnMoveDirection;
+        public event Action<Vector3> OnInput;
 
         private void Awake()
         {
@@ -31,7 +31,7 @@ namespace Cf.Inputs
         {
             Vector2 value = callbackContext.ReadValue<Vector2>().normalized;
 
-            OnMoveDirection?.Invoke(new Vector3(value.x, 0 ,value.y));
+            OnInput?.Invoke(new Vector3(value.x, 0 ,value.y));
         }
     }
 }

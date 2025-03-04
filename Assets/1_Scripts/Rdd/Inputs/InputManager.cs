@@ -2,37 +2,50 @@ using System;
 using Cf.Inputs;
 using Cf.Pattern;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class InputManager : Singleton<InputManager>
 {
     [Header("Reference")]
-    [SerializeField] private IaMoveDirection mMoveDirection;
     [SerializeField] private IaRightClick mRightClick;
 
-    public InputData Data { get; private set; } = new InputData();
-
-    private void OnDirectionInput(Vector3 vector3)
-    {
-        Data.moveDirectionVector3 = vector3;
-    }
-
-    private void OnRightClickInput(Vector2 vector2)
-    {
-        Data.rightClickVector2 = vector2;
-    }
+    [Header("View")] 
+    [SerializeField] private InputData mData;
+    
+    #region :: Unity
 
     protected override void Awake()
     {
         base.Awake();
 
-        mMoveDirection = gameObject.AddComponent<IaMoveDirection>();
-        mRightClick = gameObject.AddComponent<IaRightClick>();
+        if (!TryGetComponent(out mRightClick)) mRightClick = gameObject.AddComponent<IaRightClick>();
     }
 
     private void Start()
     {
-        mMoveDirection.OnMoveDirection += OnDirectionInput;
-        mRightClick.OnMovePoint += OnRightClickInput;
+        mRightClick.OnClick += OnRightClickInput;
+        mRightClick.OnValue += OnRightClickValueInput;
     }
+
+    #endregion
+
+    #region :: Act
+
+    public event Action<bool> OnRightClick;
+    public event Action<Vector2> OnRightClickValue;
+    
+    private void OnRightClickInput(bool b)
+    {
+        mData.isRightClick = b;
+
+        OnRightClick?.Invoke(b);
+        
+    }
+
+    private void OnRightClickValueInput(Vector2 vector2)
+    {
+        mData.rightClickVector2 = vector2;
+
+        OnRightClickValue?.Invoke(vector2);
+    }
+    #endregion
 }

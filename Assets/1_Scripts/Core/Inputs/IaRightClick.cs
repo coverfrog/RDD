@@ -6,7 +6,8 @@ namespace Cf.Inputs
 {
     public class IaRightClick : IaBase
     {
-        public event Action<Vector2> OnMovePoint;
+        public event Action<bool> OnClick; 
+        public event Action<Vector2> OnValue;
         
         private void Awake()
         {
@@ -15,7 +16,6 @@ namespace Cf.Inputs
             
             // bind
             mInputAction.AddBinding("<Mouse>/rightButton");
-            mInputAction.AddBinding("<Mouse>/position");
 
             // event
             mInputAction.performed += OnCallback;
@@ -24,17 +24,21 @@ namespace Cf.Inputs
 
         protected override void OnCallback(InputAction.CallbackContext callbackContext)
         {
-            if (!callbackContext.control.IsPressed())
+            bool isClick = callbackContext.ReadValue<float>() > 0;
+            
+            OnClick?.Invoke(isClick);
+            
+            if (!isClick)
             {
                 return;
             }
 
-            Vector2 pos = callbackContext.ReadValue<Vector2>();
+            Vector2 pos = Input.mousePosition;
 
             float clampedX = Mathf.Clamp(pos.x, 0, Screen.width);
             float clampedY = Mathf.Clamp(pos.y, 0, Screen.height);
 
-            OnMovePoint?.Invoke(new Vector2(clampedX, clampedY));
+            OnValue?.Invoke(new Vector2(clampedX, clampedY));
         }
     }
 }

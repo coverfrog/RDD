@@ -265,7 +265,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeee5b7975124c94d8fc56d7fc406593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mDirection: {fileID: 0}
+  mRightClick: {fileID: 0}
+  mData:
+    isRightClick: 0
+    moveDirectionVector3: {x: 0, y: 0, z: 0}
+    rightClickVector2: {x: 0, y: 0}
 --- !u!1 &879569475
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,6 +283,7 @@ GameObject:
   - component: {fileID: 879569477}
   - component: {fileID: 879569476}
   - component: {fileID: 879569480}
+  - component: {fileID: 879569481}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -382,13 +387,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 879569475}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e7b59b7400deb34d9d6523322b2abf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   data:
     moveSpeed: 3
+--- !u!114 &879569481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879569475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c04c850fee61743b0f8c08d473cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1194866118
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,6 +418,7 @@ GameObject:
   - component: {fileID: 1194866120}
   - component: {fileID: 1194866119}
   - component: {fileID: 1194866122}
+  - component: {fileID: 1194866123}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -526,6 +544,19 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1194866123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194866118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b409a38db16a7454884a6f0193f76056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mCamType: 0
 --- !u!1 &1344049476
 GameObject:
   m_ObjectHideFlags: 0
