@@ -6,7 +6,9 @@ using UnityEngine;
 public class InputManager : Singleton<InputManager>
 {
     [Header("Reference")]
+    [SerializeField] private IaLeftClick mLeftClick;
     [SerializeField] private IaRightClick mRightClick;
+    [SerializeField] private IaMousePosition mMousePosition;
 
     [Header("View")] 
     [SerializeField] private InputData mData;
@@ -17,35 +19,58 @@ public class InputManager : Singleton<InputManager>
     {
         base.Awake();
 
-        if (!TryGetComponent(out mRightClick)) mRightClick = gameObject.AddComponent<IaRightClick>();
+        if (!TryGetComponent(out mLeftClick))
+        {
+            mLeftClick = gameObject.AddComponent<IaLeftClick>();
+        }
+        
+        if (!TryGetComponent(out mRightClick))
+        {
+            mRightClick = gameObject.AddComponent<IaRightClick>();
+        }
+
+        if (!TryGetComponent(out mMousePosition))
+        {
+            mMousePosition = gameObject.AddComponent<IaMousePosition>();
+        }
     }
 
     private void Start()
     {
-        mRightClick.OnClick += OnRightClickInput;
-        mRightClick.OnValue += OnRightClickValueInput;
+        mLeftClick.OnInput += OnLeftClickAct;
+        mRightClick.OnInput += OnRightClickAct;
+        mMousePosition.OnInput += OnMousePositionAct;
     }
 
     #endregion
 
     #region :: Act
 
-    public event Action<bool> OnRightClick;
-    public event Action<Vector2> OnRightClickValue;
+    public event Action<bool> OnLeftClick;
     
-    private void OnRightClickInput(bool b)
+    private void OnLeftClickAct(bool b)
+    {
+        mData.isLeftClick = b;
+
+        OnLeftClick?.Invoke(b);
+    }
+
+    public event Action<bool> OnRightClick;
+    
+    private void OnRightClickAct(bool b)
     {
         mData.isRightClick = b;
 
         OnRightClick?.Invoke(b);
-        
     }
+    
+    public event Action<Vector2> OnMousePosition;
 
-    private void OnRightClickValueInput(Vector2 vector2)
+    private void OnMousePositionAct(Vector2 vector2)
     {
-        mData.rightClickVector2 = vector2;
+        mData.mousePoint = vector2;
 
-        OnRightClickValue?.Invoke(vector2);
+        OnMousePosition?.Invoke(vector2);
     }
     #endregion
 }

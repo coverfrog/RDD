@@ -4,17 +4,17 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class IaRightClick : IaBase
+    public class IaLeftClick : IaBase
     {
-        public event Action<bool> OnInput; 
-        
+        public event Action<bool> OnInput;
+
         private void Awake()
         {
             // init
             mInputAction = new InputAction("Right Click");
             
             // bind
-            mInputAction.AddBinding("<Mouse>/rightButton");
+            mInputAction.AddBinding("<Mouse>/leftButton");
 
             // event
             mInputAction.performed += OnCallback;
