@@ -10,7 +10,7 @@ namespace Cf.Inputs
     [Serializable]
     public class IaEventCondition
     {
-        public bool started = true;
+        public bool started = false;
         public bool canceled = true;
         public bool performed = true;
     }
@@ -28,7 +28,7 @@ namespace Cf.Inputs
 
         protected abstract void OnCallback(InputAction.CallbackContext callbackContext);
         
-        protected void Awake()
+        public void Begin()
         {
             _mIaEventCondition = new IaEventCondition();
             _mInputAction = new InputAction();
@@ -42,10 +42,7 @@ namespace Cf.Inputs
                 _mInputAction.performed += OnCallback;
             if (_mIaEventCondition.canceled)  
                 _mInputAction.canceled += OnCallback;
-        }
-
-        private void OnEnable()
-        {
+            
             _mInputAction?.Enable();
         }
 

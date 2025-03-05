@@ -11,12 +11,15 @@ public class IaSlot3 : IaSlot
     {
             
     }
+    
+    public override void UpdateBindKey(IaSetting settings)
+    {
+        SlotBindKeyboard = settings.slot3KeyBoard;
+    }
 
     protected override void AddBinding(ref InputAction inputAction)
     {
-        string slot3KeyBoard = InputManager.Instance.GetSetting().slot3KeyBoard;
-        
-        inputAction.AddBinding($"<Keyboard>/{slot3KeyBoard}");
+        inputAction.AddBinding($"<Keyboard>/{SlotBindKeyboard}");
     }
         
     protected override void OnCallback(InputAction.CallbackContext callbackContext)

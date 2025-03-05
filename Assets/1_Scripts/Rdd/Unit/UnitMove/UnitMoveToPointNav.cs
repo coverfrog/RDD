@@ -1,17 +1,40 @@
 using System;
 using Cf.Cams;
+using Cf.Components;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class UnitMoveToPointNav : MonoBehaviour
 {
+    [Header("Option")] 
+    [SerializeField] private bool mIsAvailableAwake = true;
+    
     [Header("Reference")]
     [SerializeField] private NavMeshAgent mNavMeshAgent;
 
+    private bool _mIsAvailable;
+    
     private bool _mIsRightClick;
     private Vector2 _mMousePosition;
+
+    #region :: Set
+
+    public void SetIsAvailable(bool available)
+    {
+        _mIsAvailable = available;
+    }
+
+    #endregion
     
+    #region :: Unity
+
+    private void Awake()
+    {
+        ComponentsUtil.TryAddComponent(this, out mNavMeshAgent);
+
+        _mIsAvailable = mIsAvailableAwake;
+    }
+
     private void OnEnable()
     {
         InputManager.Instance.OnRightClick += OnRightClick;
@@ -28,19 +51,14 @@ public class UnitMoveToPointNav : MonoBehaviour
         InputManager.Instance.OnRightClick -= OnRightClick;
         InputManager.Instance.OnMousePosition -= OnMousePosition;
     }
-
-    private void OnRightClick(bool b)
-    {
-        _mIsRightClick = b;
-    }
     
-    private void OnMousePosition(Vector2 vector2)
-    {
-        _mMousePosition = vector2;
-    }
-
     private void Update()
     {
+        if (!_mIsAvailable)
+        {
+            return;
+        }
+
         if (!_mIsRightClick)
         {
             return;
@@ -55,4 +73,20 @@ public class UnitMoveToPointNav : MonoBehaviour
 
         mNavMeshAgent.destination = new Vector3(nearHitPos.x, 0, nearHitPos.z);
     }
+
+    #endregion
+
+    #region :: Input Event
+
+    private void OnRightClick(bool b)
+    {
+        _mIsRightClick = b;
+    }
+    
+    private void OnMousePosition(Vector2 vector2)
+    {
+        _mMousePosition = vector2;
+    }
+
+    #endregion
 }

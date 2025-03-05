@@ -3,6 +3,7 @@ using Cf.Components;
 using Cf.Inputs;
 using Cf.Pattern;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class InputManager : Singleton<InputManager>
 {
@@ -17,12 +18,12 @@ public class InputManager : Singleton<InputManager>
     [SerializeField] private IaSlot3 mSlot3;
 
     [Header("View")] 
-    [SerializeField] private InputData mData;
-    [SerializeField] private InputSetting mSetting;
+    [SerializeField] private IaData mIaData = new IaData();
+    [SerializeField] private IaSetting mIaSetting = new IaSetting();
 
     #region :: Get
 
-    public InputSetting GetSetting() => mSetting;
+    public IaSetting GetIaSetting() => mIaSetting;
 
     #endregion
     
@@ -52,6 +53,20 @@ public class InputManager : Singleton<InputManager>
         ActAdd(mSlot1        , OnSlot1Act);
         ActAdd(mSlot2        , OnSlot2Act);
         ActAdd(mSlot3        , OnSlot3Act);
+        
+        mLeftClick.Begin();
+        mRightClick.Begin();
+        mMousePosition.Begin();
+        
+        mSlot0.UpdateBindKey(mIaSetting);
+        mSlot1.UpdateBindKey(mIaSetting);
+        mSlot2.UpdateBindKey(mIaSetting);
+        mSlot3.UpdateBindKey(mIaSetting);
+        
+        mSlot0.Begin();
+        mSlot1.Begin();
+        mSlot2.Begin();
+        mSlot3.Begin();
     }
 
     #endregion
@@ -69,7 +84,7 @@ public class InputManager : Singleton<InputManager>
     
     private void OnLeftClickAct(bool b)
     {
-        mData.isLeftClick = b;
+        mIaData.isLeftClick = b;
 
         OnLeftClick?.Invoke(b);
     }
@@ -78,7 +93,7 @@ public class InputManager : Singleton<InputManager>
     
     private void OnRightClickAct(bool b)
     {
-        mData.isRightClick = b;
+        mIaData.isRightClick = b;
 
         OnRightClick?.Invoke(b);
     }
@@ -87,7 +102,7 @@ public class InputManager : Singleton<InputManager>
 
     private void OnMousePositionAct(Vector2 vector2)
     {
-        mData.mousePoint = vector2;
+        mIaData.mousePoint = vector2;
 
         OnMousePosition?.Invoke(vector2);
     }
@@ -96,7 +111,7 @@ public class InputManager : Singleton<InputManager>
 
     private void OnSlot0Act(bool b)
     {
-        mData.isSlot0Click = b;
+        mIaData.isSlot0Click = b;
         
         OnSlot0?.Invoke(b);
     }
@@ -105,7 +120,7 @@ public class InputManager : Singleton<InputManager>
 
     private void OnSlot1Act(bool b)
     {
-        mData.isSlot1Click = b;
+        mIaData.isSlot1Click = b;
         
         OnSlot1?.Invoke(b);
     }
@@ -114,7 +129,7 @@ public class InputManager : Singleton<InputManager>
 
     private void OnSlot2Act(bool b)
     {
-        mData.isSlot2Click = b;
+        mIaData.isSlot2Click = b;
         
         OnSlot2?.Invoke(b);
     }
@@ -123,7 +138,7 @@ public class InputManager : Singleton<InputManager>
 
     private void OnSlot3Act(bool b)
     {
-        mData.isSlot3Click = b;
+        mIaData.isSlot3Click = b;
         
         OnSlot3?.Invoke(b);
     }

@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 namespace Cf.Inputs
 {
     [Serializable]
-    public class InputData
+    public class IaData
     {
         public bool isLeftClick;
         public bool isRightClick;
