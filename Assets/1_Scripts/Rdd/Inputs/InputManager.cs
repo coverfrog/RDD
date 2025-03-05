@@ -16,6 +16,8 @@ public class InputManager : Singleton<InputManager>
     [SerializeField] private IaSkillSlot1 mSkillSlot1;
     [SerializeField] private IaSkillSlot2 mSkillSlot2;
     [SerializeField] private IaSkillSlot3 mSkillSlot3;
+    [Space] 
+    [SerializeField] private IaSlotGroup mSlotGroup;
 
     [Header("View")] 
     [SerializeField] private IaData mIaData = new IaData();
@@ -35,6 +37,8 @@ public class InputManager : Singleton<InputManager>
         ComponentsUtil.TryAddComponent(this, out mSkillSlot1);
         ComponentsUtil.TryAddComponent(this, out mSkillSlot2);
         ComponentsUtil.TryAddComponent(this, out mSkillSlot3);
+        
+        ComponentsUtil.TryAddComponent(this, out mSlotGroup);
     }
 
     private void Start()
