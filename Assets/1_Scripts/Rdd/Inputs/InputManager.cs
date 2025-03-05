@@ -14,6 +14,13 @@ public class InputManager : Singleton<InputManager>
 
     [Header("View")] 
     [SerializeField] private InputData mData;
+    [SerializeField] private InputSetting mSetting;
+
+    #region :: Get
+
+    public InputSetting GetSetting() => mSetting;
+
+    #endregion
     
     #region :: Unity
 

@@ -275,6 +275,8 @@ MonoBehaviour:
     isSlot0Click: 0
     moveDirectionVector3: {x: 0, y: 0, z: 0}
     mousePoint: {x: 0, y: 0}
+  mSetting:
+    slot0KeyBoard: w
 --- !u!1 &1194866118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,7 +1004,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf90b27107ca24045b9d83560ad24195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mSceneCamera: {fileID: 1194866120}
 --- !u!1001 &7102182495832797903
 PrefabInstance:
   m_ObjectHideFlags: 0
