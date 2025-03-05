@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Cf.Inputs;
+using UnityEngine.InputSystem;
 
-public class IaSlot0 : IaSlot
+public class IaSlot3 : IaSlot
 {
     public override event Action<bool> OnInput;
 
@@ -14,9 +14,9 @@ public class IaSlot0 : IaSlot
 
     protected override void AddBinding(ref InputAction inputAction)
     {
-        string slot0KeyBoard = InputManager.Instance.GetSetting().slot0KeyBoard;
+        string slot3KeyBoard = InputManager.Instance.GetSetting().slot3KeyBoard;
         
-        inputAction.AddBinding($"<Keyboard>/{slot0KeyBoard}");
+        inputAction.AddBinding($"<Keyboard>/{slot3KeyBoard}");
     }
         
     protected override void OnCallback(InputAction.CallbackContext callbackContext)

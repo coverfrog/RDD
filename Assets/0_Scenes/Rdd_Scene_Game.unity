@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 799518707}
   - component: {fileID: 799518708}
   m_Layer: 0
-  m_Name: Input Action
+  m_Name: Input Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,7 +276,7 @@ MonoBehaviour:
     moveDirectionVector3: {x: 0, y: 0, z: 0}
     mousePoint: {x: 0, y: 0}
   mSetting:
-    slot0KeyBoard: w
+    slot0KeyBoard: q
 --- !u!1 &1194866118
 GameObject:
   m_ObjectHideFlags: 0
