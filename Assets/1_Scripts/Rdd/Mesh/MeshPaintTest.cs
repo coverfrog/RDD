@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class MeshPaintTest : MonoBehaviour
 {
-    [SerializeField] private int mBrushSize = 1;
+    [SerializeField] private Color mBrushColor = new Color(1, 1, 1, 1);
+    [Space]
     [SerializeField] private Texture2D mBrushTexture2D;
     [SerializeField] private Renderer mRend;
 
@@ -58,8 +59,8 @@ public class MeshPaintTest : MonoBehaviour
 
     private void PaintTexture(Texture2D tex, int centerX, int centerY)
     {
-        int brushWidth = mBrushTexture2D.width * mBrushSize;
-        int brushHeight = mBrushTexture2D.height * mBrushSize;
+        int brushWidth = mBrushTexture2D.width;
+        int brushHeight = mBrushTexture2D.height;
 
         Color[] brushPixels = mBrushTexture2D.GetPixels();
     
@@ -72,7 +73,7 @@ public class MeshPaintTest : MonoBehaviour
 
                 if (texX >= 0 && texX < tex.width && texY >= 0 && texY < tex.height)
                 {
-                    Color brushColor = brushPixels[y * brushWidth + x];
+                    Color brushColor = brushPixels[y * brushWidth + x] * mBrushColor;
                     Color baseColor = tex.GetPixel(texX, texY);
                     Color blendedColor = Color.Lerp(baseColor, brushColor, brushColor.a);
                     

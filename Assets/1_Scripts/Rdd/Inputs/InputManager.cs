@@ -21,12 +21,6 @@ public class InputManager : Singleton<InputManager>
     [SerializeField] private IaData mIaData = new IaData();
     [SerializeField] private IaSetting mIaSetting = new IaSetting();
 
-    #region :: Get
-
-    public IaSetting GetIaSetting() => mIaSetting;
-
-    #endregion
-    
     #region :: Unity
 
     protected override void Awake()
