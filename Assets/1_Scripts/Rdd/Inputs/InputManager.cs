@@ -1,4 +1,5 @@
 using System;
+using Cf.Components;
 using Cf.Inputs;
 using Cf.Pattern;
 using UnityEngine;
@@ -20,24 +21,31 @@ public class InputManager : Singleton<InputManager>
     {
         base.Awake();
 
-        if (!TryGetComponent(out mLeftClick))     mLeftClick = gameObject.AddComponent<IaLeftClick>();
-        if (!TryGetComponent(out mRightClick))    mRightClick = gameObject.AddComponent<IaRightClick>();
-        if (!TryGetComponent(out mMousePosition)) mMousePosition = gameObject.AddComponent<IaMousePosition>();
-        if (!TryGetComponent(out mSlot0))         mSlot0 = gameObject.AddComponent<IaSlot0>();
+        ComponentsUtil.TryAddComponent(this, out mLeftClick);
+        ComponentsUtil.TryAddComponent(this, out mRightClick);
+        ComponentsUtil.TryAddComponent(this, out mMousePosition);
+        ComponentsUtil.TryAddComponent(this, out mSlot0);
     }
 
     private void Start()
     {
-        mLeftClick.OnInput     += OnLeftClickAct;
-        mRightClick.OnInput    += OnRightClickAct;
-        mMousePosition.OnInput += OnMousePositionAct;
-        mSlot0.OnInput         += OnSlot0Act;
+        ActAdd(mLeftClick    , OnLeftClickAct);
+        ActAdd(mRightClick   , OnRightClickAct);
+        ActAdd(mMousePosition, OnMousePositionAct);
+        ActAdd(mSlot0        , OnSlot0Act);
     }
 
     #endregion
 
     #region :: Act
 
+    private static void ActAdd<T>(IaBase<T> ia, Action<T> act) where T : struct
+    {
+        ia.OnInput += act;
+    }
+    
+    //
+    
     public event Action<bool> OnLeftClick;
     
     private void OnLeftClickAct(bool b)

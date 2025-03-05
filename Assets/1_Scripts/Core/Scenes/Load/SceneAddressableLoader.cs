@@ -62,18 +62,10 @@ namespace Cf.Scenes
             OnActCompleted?.Invoke(handle);
         }
 
-        public AsyncOperation Active()
+        public void Release()
         {
-            if (!_nSceneHandle.HasValue)
-            {
-                return null;
-            }
-
-            AsyncOperation op = _nSceneHandle.Value.Result.ActivateAsync();
-
-            op.allowSceneActivation = true;
-
-            return op;
+            _mLoadHandle?.Release();
+            _mLoadHandle = null;
         }
     }
 }

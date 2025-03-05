@@ -13,7 +13,7 @@ namespace Cf.Scenes
     {
         #region :: Addressable Load
 
-        private static readonly List<SceneAddressableLoader> AddressableLoaderList = new List<SceneAddressableLoader>(2);
+        private static SceneAddressableLoader SceneAddressableLoader { get; set; }
 
         protected static SceneAddressableLoader AddressableLoad(
                 string path, 
@@ -23,11 +23,17 @@ namespace Cf.Scenes
                 LoadSceneMode mode = LoadSceneMode.Single,
                 bool activeOnLoad = true)
         {
+            if (SceneAddressableLoader != null)
+            {
+                Debug.LogError($"Scene Addressable Loader Is Running");
+                return null;
+            }
+
             actDestroyed         += OnAddressableLoadDestroyed;
             actCompletedTypeless += OnAddressableLoadCompletedTypeless;
             actCompleted         += OnAddressableLoadCompleted;
             
-            SceneAddressableLoader loader = new SceneAddressableLoader(
+            SceneAddressableLoader = new SceneAddressableLoader(
                 path,
                 actDestroyed,
                 actCompletedTypeless,
@@ -35,14 +41,12 @@ namespace Cf.Scenes
                 mode,
                 activeOnLoad);
 
-            AddressableLoaderList.Add(loader);
-            
-            return loader;
+            return SceneAddressableLoader;
         }
 
         private static void OnAddressableLoadDestroyed(AsyncOperationHandle handle)
         {
-            OnAddressableLoaderListRemove();
+            SceneAddressableLoader.Release();
         }
         
         private static void OnAddressableLoadCompletedTypeless(AsyncOperationHandle handle)
@@ -52,17 +56,12 @@ namespace Cf.Scenes
 
         private static void OnAddressableLoadCompleted(AsyncOperationHandle<SceneInstance> handle)
         {
-            OnAddressableLoaderListRemove();
-        }
-
-        private static void OnAddressableLoaderListRemove()
-        {
-            AddressableLoaderList.Clear();
+            SceneAddressableLoader.Release();
         }
 
         #endregion
 
-        #region :: Scene
+        #region :: Scene Ctrl
 
         protected static void SceneActive(AsyncOperationHandle<SceneInstance> handle)
         {
