@@ -196,9 +196,6 @@ PrefabInstance:
       addedObject: {fileID: 354445672}
     - targetCorrespondingSourceObject: {fileID: 6885800925556411052, guid: 1845cf50f1466164d83d20e2ca95c2ce, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 354445671}
-    - targetCorrespondingSourceObject: {fileID: 6885800925556411052, guid: 1845cf50f1466164d83d20e2ca95c2ce, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 354445670}
     - targetCorrespondingSourceObject: {fileID: 6885800925556411052, guid: 1845cf50f1466164d83d20e2ca95c2ce, type: 3}
       insertIndex: -1
@@ -229,19 +226,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d82f90031f61bd442a2ca4e74bc7559b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &354445671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 354445669}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6c04c850fee61743b0f8c08d473cc69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mNavMeshAgent: {fileID: 354445672}
 --- !u!195 &354445672
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -463,9 +447,11 @@ MonoBehaviour:
   mLeftClick: {fileID: 0}
   mRightClick: {fileID: 0}
   mMousePosition: {fileID: 0}
+  mSlot0: {fileID: 0}
   mData:
     isLeftClick: 0
     isRightClick: 0
+    isSlot0Click: 0
     moveDirectionVector3: {x: 0, y: 0, z: 0}
     mousePoint: {x: 0, y: 0}
 --- !u!1 &1194866118
