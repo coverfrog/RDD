@@ -4,27 +4,24 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class IaMoveDirection : IaBase
+    public class IaMoveDirection : IaBase<Vector3>
     {
-        public event Action<Vector3> OnInput;
+        public override event Action<Vector3> OnInput;
 
-        private void Awake()
+        protected override void SetEventCondition(ref IaEventCondition condition)
         {
-            // init
-            mInputAction = new InputAction("Move Direction");
+            
+        }
 
-            // bind
-            mInputAction.AddBinding("<Gamepad>/leftStick");
+        protected override void AddBinding(ref InputAction inputAction)
+        {
+            inputAction.AddBinding("<Gamepad>/leftStick");
 
-            mInputAction.AddCompositeBinding("2DVector")
+            inputAction.AddCompositeBinding("2DVector")
                 .With("Up", "<Keyboard>/w")
                 .With("Down", "<Keyboard>/s")
                 .With("Left", "<Keyboard>/a")
                 .With("Right", "<Keyboard>/d");
-            
-            // event
-            mInputAction.performed += OnCallback;
-            mInputAction.canceled += OnCallback;
         }
 
         protected override void OnCallback(InputAction.CallbackContext callbackContext)

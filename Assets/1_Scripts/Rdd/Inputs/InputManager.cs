@@ -9,6 +9,7 @@ public class InputManager : Singleton<InputManager>
     [SerializeField] private IaLeftClick mLeftClick;
     [SerializeField] private IaRightClick mRightClick;
     [SerializeField] private IaMousePosition mMousePosition;
+    [SerializeField] private IaSlot0 mSlot0;
 
     [Header("View")] 
     [SerializeField] private InputData mData;
@@ -19,27 +20,18 @@ public class InputManager : Singleton<InputManager>
     {
         base.Awake();
 
-        if (!TryGetComponent(out mLeftClick))
-        {
-            mLeftClick = gameObject.AddComponent<IaLeftClick>();
-        }
-        
-        if (!TryGetComponent(out mRightClick))
-        {
-            mRightClick = gameObject.AddComponent<IaRightClick>();
-        }
-
-        if (!TryGetComponent(out mMousePosition))
-        {
-            mMousePosition = gameObject.AddComponent<IaMousePosition>();
-        }
+        if (!TryGetComponent(out mLeftClick))     mLeftClick = gameObject.AddComponent<IaLeftClick>();
+        if (!TryGetComponent(out mRightClick))    mRightClick = gameObject.AddComponent<IaRightClick>();
+        if (!TryGetComponent(out mMousePosition)) mMousePosition = gameObject.AddComponent<IaMousePosition>();
+        if (!TryGetComponent(out mSlot0))         mSlot0 = gameObject.AddComponent<IaSlot0>();
     }
 
     private void Start()
     {
-        mLeftClick.OnInput += OnLeftClickAct;
-        mRightClick.OnInput += OnRightClickAct;
+        mLeftClick.OnInput     += OnLeftClickAct;
+        mRightClick.OnInput    += OnRightClickAct;
         mMousePosition.OnInput += OnMousePositionAct;
+        mSlot0.OnInput         += OnSlot0Act;
     }
 
     #endregion
@@ -72,5 +64,15 @@ public class InputManager : Singleton<InputManager>
 
         OnMousePosition?.Invoke(vector2);
     }
+
+    public event Action<bool> OnSlot0;
+
+    private void OnSlot0Act(bool b)
+    {
+        mData.isSlot0Click = b;
+        
+        OnSlot0?.Invoke(b);
+    }
+
     #endregion
 }

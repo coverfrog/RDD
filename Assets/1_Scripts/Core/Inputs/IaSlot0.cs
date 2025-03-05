@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class IaLeftClick : IaBase<bool>
+    public class IaSlot0 :  IaBase<bool>
     {
         public override event Action<bool> OnInput;
 
@@ -15,9 +15,9 @@ namespace Cf.Inputs
 
         protected override void AddBinding(ref InputAction inputAction)
         {
-            inputAction.AddBinding("<Mouse>/leftButton");
+            inputAction.AddBinding("<Keyboard>/q");
         }
-
+        
         protected override void OnCallback(InputAction.CallbackContext callbackContext)
         {
             bool isClick = callbackContext.ReadValue<float>() > 0;

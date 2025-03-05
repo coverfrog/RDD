@@ -9,7 +9,9 @@ namespace Cf.Inputs
     {
         public bool isLeftClick;
         public bool isRightClick;
-        
+        [Space] 
+        public bool isSlot0Click;
+        [Space]
         public Vector3 moveDirectionVector3;
         public Vector2 mousePoint;
     }

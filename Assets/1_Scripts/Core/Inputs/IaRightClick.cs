@@ -4,21 +4,18 @@ using UnityEngine.InputSystem;
 
 namespace Cf.Inputs
 {
-    public class IaRightClick : IaBase
+    public class IaRightClick : IaBase<bool>
     {
-        public event Action<bool> OnInput; 
-        
-        private void Awake()
-        {
-            // init
-            mInputAction = new InputAction("Right Click");
-            
-            // bind
-            mInputAction.AddBinding("<Mouse>/rightButton");
+        public override event Action<bool> OnInput;
 
-            // event
-            mInputAction.performed += OnCallback;
-            mInputAction.canceled += OnCallback;
+        protected override void SetEventCondition(ref IaEventCondition condition)
+        {
+            
+        }
+
+        protected override void AddBinding(ref InputAction inputAction)
+        {
+            inputAction.AddBinding("<Mouse>/rightButton");
         }
 
         protected override void OnCallback(InputAction.CallbackContext callbackContext)
