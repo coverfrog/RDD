@@ -272,7 +272,7 @@ MonoBehaviour:
   mSlot1: {fileID: 0}
   mSlot2: {fileID: 0}
   mSlot3: {fileID: 0}
-  mData:
+  mIaData:
     isLeftClick: 0
     isRightClick: 0
     isSlot0Click: 0
@@ -281,7 +281,7 @@ MonoBehaviour:
     isSlot3Click: 0
     moveDirectionVector3: {x: 0, y: 0, z: 0}
     mousePoint: {x: 0, y: 0}
-  mSetting:
+  mIaSetting:
     slot0KeyBoard: q
     slot1KeyBoard: w
     slot2KeyBoard: e
@@ -451,7 +451,6 @@ GameObject:
   - component: {fileID: 1212028161}
   - component: {fileID: 1212028160}
   - component: {fileID: 1212028165}
-  - component: {fileID: 1212028164}
   - component: {fileID: 1212028166}
   m_Layer: 0
   m_Name: Test Cube
@@ -549,20 +548,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1212028164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212028159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6c04c850fee61743b0f8c08d473cc69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mIsAvailableAwake: 1
-  mNavMeshAgent: {fileID: 1212028165}
 --- !u!195 &1212028165
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -594,9 +579,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1212028159}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d1a68dc58ee65d48be4f6bcc56ca02f, type: 3}
+  m_Script: {fileID: 11500000, guid: 3245ac5414e36fa43bb5d4962e872d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mData:
+    isMine: 1
+    nickName: 
 --- !u!1 &1344049476
 GameObject:
   m_ObjectHideFlags: 0

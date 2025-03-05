@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using Cf.Inputs;
 using UnityEngine.InputSystem;
+using Cf.Inputs;
 
-public class IaSlot3 : IaSlot
+public class IaSkillSlot0 : IaSlot
 {
     public override event Action<bool> OnInput;
 
@@ -14,7 +14,7 @@ public class IaSlot3 : IaSlot
     
     public override void UpdateBindKey(IaSetting settings)
     {
-        SlotBindKeyboard = settings.slot3KeyBoard;
+        SlotBindKeyboard = settings.slot0KeyBoard;
     }
 
     protected override void AddBinding(ref InputAction inputAction)

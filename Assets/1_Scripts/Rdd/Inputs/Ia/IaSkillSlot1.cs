@@ -3,7 +3,7 @@ using UnityEngine;
 using Cf.Inputs;
 using UnityEngine.InputSystem;
 
-public class IaSlot2 : IaSlot
+public class IaSkillSlot1 : IaSlot
 {
     public override event Action<bool> OnInput;
 
@@ -11,12 +11,12 @@ public class IaSlot2 : IaSlot
     {
             
     }
-    
+
     public override void UpdateBindKey(IaSetting settings)
     {
-        SlotBindKeyboard = settings.slot2KeyBoard;
+        SlotBindKeyboard = settings.slot1KeyBoard;
     }
-
+    
     protected override void AddBinding(ref InputAction inputAction)
     {
         inputAction.AddBinding($"<Keyboard>/{SlotBindKeyboard}");

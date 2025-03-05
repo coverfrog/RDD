@@ -10,10 +10,10 @@ namespace Cf.Inputs
         public bool isLeftClick;
         public bool isRightClick;
         [Space] 
-        public bool isSlot0Click;
-        public bool isSlot1Click;
-        public bool isSlot2Click;
-        public bool isSlot3Click;
+        public bool isSkillSlot0Click;
+        public bool isSkillSlot1Click;
+        public bool isSkillSlot2Click;
+        public bool isSkillSlot3Click;
         [Space]
         public Vector3 moveDirectionVector3;
         public Vector2 mousePoint;
