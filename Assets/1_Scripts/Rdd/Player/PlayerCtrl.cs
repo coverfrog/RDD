@@ -11,21 +11,17 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (InputManager.Instance)
         {
-            // InputManager.Instance.OnSkillSlot0 += OnSkillSlot0;
-            // InputManager.Instance.OnSkillSlot1 += OnSkillSlot1;
-            // InputManager.Instance.OnSkillSlot2 += OnSkillSlot2;
-            // InputManager.Instance.OnSkillSlot3 += OnSkillSlot3;
+            InputManager.Instance.OnSkillSlot += OnSkillSlot;
         }
     }
+
+  
 
     private void OnDisable()
     {
         if (InputManager.Instance)
         {
-            // InputManager.Instance.OnSkillSlot0 -= OnSkillSlot0;
-            // InputManager.Instance.OnSkillSlot1 -= OnSkillSlot1;
-            // InputManager.Instance.OnSkillSlot2 -= OnSkillSlot2;
-            // InputManager.Instance.OnSkillSlot3 -= OnSkillSlot3;
+            InputManager.Instance.OnSkillSlot -= OnSkillSlot;
         }
     }
 
@@ -38,28 +34,9 @@ public class PlayerCtrl : MonoBehaviour
 
     #region :: On Input
 
-    private void OnSkillSlot0(bool b)
+    private void OnSkillSlot(int idx, bool b)
     {
         if (!mData.isMine) return;
-        if (!b) return;
-    }
-    
-    private void OnSkillSlot1(bool b)
-    {
-        if (!mData.isMine) return;
-        if (!b) return;
-    }
-    
-    private void OnSkillSlot2(bool b)
-    {
-        if (!mData.isMine) return;
-        if (!b) return;
-    }
-    
-    private void OnSkillSlot3(bool b)
-    {
-        if (!mData.isMine) return;
-        if (!b) return;
     }
 
     #endregion
