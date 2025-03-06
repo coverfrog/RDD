@@ -1,6 +1,6 @@
 {
-    "name": "Cf.Components",
-    "rootNamespace": "Cf.Components",
+    "name": "Cf.Structs",
+    "rootNamespace": "Cf.Structs",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,6 @@
 using System;
 using Cf.Cams;
-using Cf.Components;
+using Cf.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -30,7 +30,7 @@ public class UnitMoveToPointNav : MonoBehaviour
 
     private void Awake()
     {
-        ComponentsUtil.TryAddComponent(this, out mNavMeshAgent);
+        CfUtil.Components.TryAddComponent(this, out mNavMeshAgent);
 
         _mIsAvailable = mIsAvailableAwake;
     }

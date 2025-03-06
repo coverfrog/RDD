@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cf.Components;
+using Cf.Utils;
 using Cf.Inputs;
 using Cf.Pattern;
 using UnityEngine;
@@ -25,11 +25,11 @@ public class InputManager : Singleton<InputManager>
     protected override void Awake()
     {
         base.Awake();
-
-        ComponentsUtil.TryAddNewObject(this, out mLeftClick);
-        ComponentsUtil.TryAddNewObject(this, out mRightClick);
-        ComponentsUtil.TryAddNewObject(this, out mMousePosition);
-        ComponentsUtil.TryAddNewObject(this, out mSlotSkillGroup);
+        
+        CfUtil.Components.TryAddNewObject(this, out mLeftClick);
+        CfUtil.Components.TryAddNewObject(this, out mRightClick);
+        CfUtil.Components.TryAddNewObject(this, out mMousePosition);
+        CfUtil.Components.TryAddNewObject(this, out mSlotSkillGroup);
         
         mSlotSkillGroup.Init("Skill", mIaSetting.SlotSkillKeyBoardList);
     }

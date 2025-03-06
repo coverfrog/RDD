@@ -15,8 +15,6 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
-  
-
     private void OnDisable()
     {
         if (InputManager.Instance)

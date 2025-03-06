@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cf.Components;
+using Cf.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -23,7 +23,7 @@ namespace Cf.Inputs
             
             foreach (string key in keyList)
             {
-                ComponentsUtil.TryAddComponent(this, out IaSlot iaSlot, true);
+                CfUtil.Components.TryAddComponent(this, out IaSlot iaSlot, true);
                 
                 iaSlot.SetIdx(idx);
                 iaSlot.SetBindKeyboard(key);
