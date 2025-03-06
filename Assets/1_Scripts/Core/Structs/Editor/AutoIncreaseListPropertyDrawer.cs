@@ -10,15 +10,22 @@ namespace Cf.Structs
     [CustomPropertyDrawer(typeof(AutoIncreaseList<>))]
     public class AutoIncreaseListPropertyDrawer : PropertyDrawer
     {
-        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var container = new VisualElement();
+            SerializedProperty lisProperty = property.FindPropertyRelative("list");
 
-            var listField = new PropertyField(property.FindPropertyRelative("list"));
+            if (lisProperty == null) return;
 
-            container.Add(listField);
+            EditorGUI.PropertyField(position, lisProperty, label, true);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            SerializedProperty listProperty = property.FindPropertyRelative("list");
             
-            return container;
+            if (listProperty == null) return base.GetPropertyHeight(property, label);
+            
+            return EditorGUI.GetPropertyHeight(listProperty, true);
         }
     }
 }

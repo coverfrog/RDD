@@ -90,7 +90,7 @@ public class InputManager : Singleton<InputManager>
     
     private void OnSkillSlotAct(int i, bool b)
     {
-        mIaData.SetIsSkillSlotClickList(i, b);
+        mIaData.isSkillSlotClickList[i] = b;
 
         OnSkillSlot?.Invoke(i, b);
     }
