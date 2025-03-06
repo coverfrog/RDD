@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Cf.Components;
 using Cf.Inputs;
 using Cf.Pattern;
@@ -12,12 +14,7 @@ public class InputManager : Singleton<InputManager>
     [SerializeField] private IaRightClick mRightClick;
     [SerializeField] private IaMousePosition mMousePosition;
     [Space]
-    [SerializeField] private IaSkillSlot0 mSkillSlot0;
-    [SerializeField] private IaSkillSlot1 mSkillSlot1;
-    [SerializeField] private IaSkillSlot2 mSkillSlot2;
-    [SerializeField] private IaSkillSlot3 mSkillSlot3;
-    [Space] 
-    [SerializeField] private IaSlotGroup mSlotGroup;
+    [SerializeField] private IaSlotGroup mSlotSkillGroup;
 
     [Header("View")] 
     [SerializeField] private IaData mIaData = new IaData();
@@ -29,42 +26,26 @@ public class InputManager : Singleton<InputManager>
     {
         base.Awake();
 
-        ComponentsUtil.TryAddComponent(this, out mLeftClick);
-        ComponentsUtil.TryAddComponent(this, out mRightClick);
-        ComponentsUtil.TryAddComponent(this, out mMousePosition);
+        ComponentsUtil.TryAddNewObject(this, out mLeftClick);
+        ComponentsUtil.TryAddNewObject(this, out mRightClick);
+        ComponentsUtil.TryAddNewObject(this, out mMousePosition);
+        ComponentsUtil.TryAddNewObject(this, out mSlotSkillGroup);
         
-        ComponentsUtil.TryAddComponent(this, out mSkillSlot0);
-        ComponentsUtil.TryAddComponent(this, out mSkillSlot1);
-        ComponentsUtil.TryAddComponent(this, out mSkillSlot2);
-        ComponentsUtil.TryAddComponent(this, out mSkillSlot3);
-        
-        ComponentsUtil.TryAddComponent(this, out mSlotGroup);
+        mSlotSkillGroup.Init("Skill", mIaSetting.SlotSkillKeyBoardList);
     }
 
     private void Start()
     {
-        ActAdd(mLeftClick    , OnLeftClickAct);
-        ActAdd(mRightClick   , OnRightClickAct);
+        ActAdd(mLeftClick, OnLeftClickAct);
+        ActAdd(mRightClick, OnRightClickAct);
         ActAdd(mMousePosition, OnMousePositionAct);
-        
-        ActAdd(mSkillSlot0        , OnSlot0Act);
-        ActAdd(mSkillSlot1        , OnSlot1Act);
-        ActAdd(mSkillSlot2        , OnSlot2Act);
-        ActAdd(mSkillSlot3        , OnSlot3Act);
-        
+
         mLeftClick.Begin();
         mRightClick.Begin();
         mMousePosition.Begin();
-        
-        mSkillSlot0.UpdateBindKey(mIaSetting);
-        mSkillSlot1.UpdateBindKey(mIaSetting);
-        mSkillSlot2.UpdateBindKey(mIaSetting);
-        mSkillSlot3.UpdateBindKey(mIaSetting);
-        
-        mSkillSlot0.Begin();
-        mSkillSlot1.Begin();
-        mSkillSlot2.Begin();
-        mSkillSlot3.Begin();
+
+        mSlotSkillGroup.OnInput += OnSkillSlotAct;
+        mSlotSkillGroup.Begin();
     }
 
     #endregion
@@ -105,40 +86,13 @@ public class InputManager : Singleton<InputManager>
         OnMousePosition?.Invoke(vector2);
     }
 
-    public event Action<bool> OnSkillSlot0;
-
-    private void OnSlot0Act(bool b)
-    {
-        mIaData.isSkillSlot0Click = b;
-        
-        OnSkillSlot0?.Invoke(b);
-    }
+    public event Action<int, bool> OnSkillSlot;
     
-    public event Action<bool> OnSkillSlot1;
-
-    private void OnSlot1Act(bool b)
+    private void OnSkillSlotAct(int i, bool b)
     {
-        mIaData.isSkillSlot1Click = b;
-        
-        OnSkillSlot1?.Invoke(b);
-    }
-    
-    public event Action<bool> OnSkillSlot2;
+        mIaData.SetIsSkillSlotClickList(i, b);
 
-    private void OnSlot2Act(bool b)
-    {
-        mIaData.isSkillSlot2Click = b;
-        
-        OnSkillSlot2?.Invoke(b);
-    }
-    
-    public event Action<bool> OnSkillSlot3;
-
-    private void OnSlot3Act(bool b)
-    {
-        mIaData.isSkillSlot3Click = b;
-        
-        OnSkillSlot3?.Invoke(b);
+        OnSkillSlot?.Invoke(i, b);
     }
 
     #endregion

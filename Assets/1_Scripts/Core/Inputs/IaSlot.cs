@@ -1,21 +1,50 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Cf.Inputs
 {
-    public abstract class IaSlot : IaBase<bool>
+    [Serializable]
+    public struct IaSlotData
     {
-        protected string SlotBindKeyboard;
-        
-        public abstract override event Action<bool> OnInput;
-        
-        protected abstract override void SetEventCondition(ref IaEventCondition condition);
-        
-        public abstract void UpdateBindKey(IaSetting settings);
+        public int idx;
+        public string bindKeyboard;
+        [Space]
+        public bool isClick;
+    }
 
-        protected abstract override void AddBinding(ref InputAction inputAction);
+    public class IaSlot : IaBase<IaSlotData>
+    {
+        [SerializeField] private IaSlotData iaSlotData;
+
+        public void SetIdx(int idx)
+        {
+            iaSlotData.idx = idx;
+        }
+
+        public void SetBindKeyboard(string key)
+        {
+            iaSlotData.bindKeyboard = key;
+        }
         
-        protected abstract override void OnCallback(InputAction.CallbackContext callbackContext);
+        public override event Action<IaSlotData> OnInput;
+
+        protected override void SetEventCondition(ref IaEventCondition condition)
+        {
+            
+        }
+
+        protected override void AddBinding(ref InputAction inputAction)
+        {
+            inputAction.AddBinding($"<Keyboard>/{iaSlotData.bindKeyboard}");
+        }
+
+        protected override void OnCallback(InputAction.CallbackContext callbackContext)
+        {
+            iaSlotData.isClick = callbackContext.ReadValue<float>() > 0;
+            
+            OnInput?.Invoke(iaSlotData);
+        }
     }
 }

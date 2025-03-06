@@ -11,10 +11,10 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (InputManager.Instance)
         {
-            InputManager.Instance.OnSkillSlot0 += OnSkillSlot0;
-            InputManager.Instance.OnSkillSlot1 += OnSkillSlot1;
-            InputManager.Instance.OnSkillSlot2 += OnSkillSlot2;
-            InputManager.Instance.OnSkillSlot3 += OnSkillSlot3;
+            // InputManager.Instance.OnSkillSlot0 += OnSkillSlot0;
+            // InputManager.Instance.OnSkillSlot1 += OnSkillSlot1;
+            // InputManager.Instance.OnSkillSlot2 += OnSkillSlot2;
+            // InputManager.Instance.OnSkillSlot3 += OnSkillSlot3;
         }
     }
 
@@ -22,10 +22,10 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (InputManager.Instance)
         {
-            InputManager.Instance.OnSkillSlot0 -= OnSkillSlot0;
-            InputManager.Instance.OnSkillSlot1 -= OnSkillSlot1;
-            InputManager.Instance.OnSkillSlot2 -= OnSkillSlot2;
-            InputManager.Instance.OnSkillSlot3 -= OnSkillSlot3;
+            // InputManager.Instance.OnSkillSlot0 -= OnSkillSlot0;
+            // InputManager.Instance.OnSkillSlot1 -= OnSkillSlot1;
+            // InputManager.Instance.OnSkillSlot2 -= OnSkillSlot2;
+            // InputManager.Instance.OnSkillSlot3 -= OnSkillSlot3;
         }
     }
 
