@@ -20,9 +20,13 @@ namespace Cf.Docs
 
     public class DocsXlsxTester : MonoBehaviour
     {
+        public TestClass test;
+        
         private void Start()
         {
             var x = new TestClassXlsx(DocsRoot.Assets, new[] { "__TEST___" }, "Simple");
+            x.Read(out test);
+
         }
     }
 }

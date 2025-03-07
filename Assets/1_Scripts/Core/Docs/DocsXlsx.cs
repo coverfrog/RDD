@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,16 +71,63 @@ namespace Cf.Docs
             stream.Close();
         }
 
-        protected override string CreateDocsData(T t)
-        {
-            return null;
-        }
+        protected override string CreateDocsData(T t) { return null; }
 
         protected override T ReadDocsFile()
         {
-            using StreamReader reader = new StreamReader(DocsPath);
+            using FileStream fileStream = new FileStream(DocsPath, FileMode.Open, FileAccess.Read);
 
-            return null;
+            T t = new T();
+            List<MemberInfo> memberList = typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field).ToList();
+            
+            IWorkbook wb = new XSSFWorkbook(fileStream);
+            ISheet sheet = wb.GetSheetAt(0);
+            
+            IRow headerRow = sheet.GetRow(0);
+            IRow valueRow = sheet.GetRow(1);
+            
+            for (int i = 0; i < headerRow.LastCellNum; i++)
+            {
+                string header = headerRow.GetCell(i).StringCellValue;
+                
+                var cell = valueRow.GetCell(i);
+                object value = null;
+
+                switch (cell.CellType)
+                {
+                    case CellType.String:
+                    {
+                        value = cell.StringCellValue;
+                    }
+                        break;
+                    case CellType.Boolean:
+                    {
+                        value = cell.BooleanCellValue;
+                    }
+                        break;
+                    case CellType.Blank:
+                    case CellType.Unknown:
+                    case CellType.Formula:
+                    case CellType.Error:
+                        break;
+                    case CellType.Numeric:
+                    {
+                        
+                    }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                if (value == null)
+                {
+                    continue;
+                }
+                
+                ((FieldInfo)memberList[0]).SetValue(t, value);
+            }
+            
+            return t;
         }
     }
 }
