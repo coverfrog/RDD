@@ -41,7 +41,6 @@ namespace Cf.Docs
 
         protected override T ReadDocsFile()
         {
-            // reader
             using StreamReader reader = new StreamReader(DocsPath);
 
             T t = new XmlSerializer(typeof(T)).Deserialize(reader) as T;

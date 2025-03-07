@@ -60,7 +60,7 @@ namespace Cf.Docs
     {
         protected readonly string DocsPath;
 
-        private readonly string _docsFolderPath;
+        protected readonly string DocsFolderPath;
         
         protected Docs(DocsRoot docsRoot, string[] subPathArr, string fileName, DocsExtend extend, bool isCreateAuto = true)
         {
@@ -74,7 +74,7 @@ namespace Cf.Docs
             // docs folder path combine
             // 1. root
             // 2. sub
-            _docsFolderPath = docsRoot switch
+            DocsFolderPath = docsRoot switch
             {
                 DocsRoot.Project =>
                     Directory.GetParent(Application.dataPath)?.FullName,
@@ -99,7 +99,7 @@ namespace Cf.Docs
                 _ => "",
             };
 
-            if (_docsFolderPath == null)
+            if (DocsFolderPath == null)
             {
                 FilePathErrorLog(2);
                 return;
@@ -109,7 +109,7 @@ namespace Cf.Docs
             {
                 string subPath = subPathArr.Aggregate(Path.Combine);
 
-                _docsFolderPath = Path.Combine(_docsFolderPath, subPath);
+                DocsFolderPath = Path.Combine(DocsFolderPath, subPath);
             }
 
             // file full name combine
@@ -118,7 +118,7 @@ namespace Cf.Docs
             string docsFullName = $"{fileName}.{extend.ToString().ToLower()}";
             
             // result : docs path combine
-            DocsPath = Path.Combine(_docsFolderPath, docsFullName);
+            DocsPath = Path.Combine(DocsFolderPath, docsFullName);
 
             // file exist 
             if (File.Exists(DocsPath))
@@ -151,11 +151,11 @@ namespace Cf.Docs
 
         protected abstract string CreateDocsData(T t);
         
-        private void Create(T t)
+        protected virtual void Create(T t)
         {
-            if (!Directory.Exists(_docsFolderPath))
+            if (!Directory.Exists(DocsFolderPath))
             {
-                Directory.CreateDirectory(_docsFolderPath);
+                Directory.CreateDirectory(DocsFolderPath);
             }
 
             using FileStream stream = new FileStream(DocsPath, FileMode.Create, FileAccess.Write);
