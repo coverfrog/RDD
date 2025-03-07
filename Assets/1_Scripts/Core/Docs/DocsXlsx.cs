@@ -88,8 +88,6 @@ namespace Cf.Docs
             
             for (int i = 0; i < headerRow.LastCellNum; i++)
             {
-                string header = headerRow.GetCell(i).StringCellValue;
-                
                 var cell = valueRow.GetCell(i);
                 object value = null;
 
@@ -112,7 +110,24 @@ namespace Cf.Docs
                         break;
                     case CellType.Numeric:
                     {
+                        var field = (FieldInfo)memberList[i];
                         
+                        if (field.FieldType == typeof(int))
+                        {
+                            value = (int)cell.NumericCellValue;
+                        }
+                        else if (field.FieldType == typeof(long))
+                        {
+                            value = (long)cell.NumericCellValue;
+                        }
+                        else if (field.FieldType == typeof(float))
+                        {
+                            value = (float)cell.NumericCellValue;
+                        }
+                        else
+                        {
+                            value = cell.NumericCellValue;
+                        }
                     }
                         break;
                     default:
@@ -124,7 +139,7 @@ namespace Cf.Docs
                     continue;
                 }
                 
-                ((FieldInfo)memberList[0]).SetValue(t, value);
+                ((FieldInfo)memberList[i]).SetValue(t, value);
             }
             
             return t;
