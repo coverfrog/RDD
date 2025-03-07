@@ -274,7 +274,8 @@ MonoBehaviour:
     isRightClick: 0
     moveDirectionVector3: {x: 0, y: 0, z: 0}
     mousePoint: {x: 0, y: 0}
-    isSkillSlotClickList: 
+    isSkillSlotClickList:
+      list: 
   mIaSetting:
     slotSkillKeyBoardList:
     - q

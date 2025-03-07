@@ -11,7 +11,7 @@ namespace Cf.Docs
 
         protected override string CreateDocsData(T t)
         {
-            return JsonConvert.SerializeObject(t);
+            return JsonConvert.SerializeObject(t, Formatting.Indented);
         }
 
         protected override T ReadDocsFile()

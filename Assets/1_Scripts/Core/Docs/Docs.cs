@@ -59,10 +59,9 @@ namespace Cf.Docs
     public abstract class Docs<T> where T : class, new()
     {
         protected readonly string DocsPath;
-        protected readonly string DocsFolderPath;
-        protected readonly string DocsFileName;
-        private bool _mIsFileExist;
 
+        private readonly string _docsFolderPath;
+        
         protected Docs(DocsRoot docsRoot, string[] subPathArr, string fileName, DocsExtend extend, bool isCreateAuto = true)
         {
             // file name
@@ -72,12 +71,10 @@ namespace Cf.Docs
                 return;
             }
 
-            DocsFileName = fileName;
-
             // docs folder path combine
             // 1. root
             // 2. sub
-            DocsFolderPath = docsRoot switch
+            _docsFolderPath = docsRoot switch
             {
                 DocsRoot.Project =>
                     Directory.GetParent(Application.dataPath)?.FullName,
@@ -102,7 +99,7 @@ namespace Cf.Docs
                 _ => "",
             };
 
-            if (DocsFolderPath == null)
+            if (_docsFolderPath == null)
             {
                 FilePathErrorLog(2);
                 return;
@@ -112,7 +109,7 @@ namespace Cf.Docs
             {
                 string subPath = subPathArr.Aggregate(Path.Combine);
 
-                DocsFolderPath = Path.Combine(DocsFolderPath, subPath);
+                _docsFolderPath = Path.Combine(_docsFolderPath, subPath);
             }
 
             // file full name combine
@@ -121,13 +118,11 @@ namespace Cf.Docs
             string docsFullName = $"{fileName}.{extend.ToString().ToLower()}";
             
             // result : docs path combine
-            DocsPath = Path.Combine(DocsFolderPath, docsFullName);
+            DocsPath = Path.Combine(_docsFolderPath, docsFullName);
 
             // file exist 
             if (File.Exists(DocsPath))
             {
-                _mIsFileExist = true;
-                
                 return;
             }
 
@@ -137,7 +132,7 @@ namespace Cf.Docs
             }
 
             // create
-            Create(null);
+            Create(new T());
 
         }
 
@@ -158,9 +153,9 @@ namespace Cf.Docs
         
         private void Create(T t)
         {
-            if (!Directory.Exists(DocsFolderPath))
+            if (!Directory.Exists(_docsFolderPath))
             {
-                Directory.CreateDirectory(DocsFolderPath);
+                Directory.CreateDirectory(_docsFolderPath);
             }
 
             using FileStream stream = new FileStream(DocsPath, FileMode.Create, FileAccess.Write);
@@ -171,15 +166,13 @@ namespace Cf.Docs
             }
                 
             stream.Close();
-            
-            _mIsFileExist = true;
         }
 
         protected abstract T ReadDocsFile();
 
         public bool Read(out T docsStruct)
         {
-            if (!_mIsFileExist)
+            if (!IsExist())
             {
                 FilePathErrorLog(1);
 
@@ -200,7 +193,7 @@ namespace Cf.Docs
 
         public void Delete()
         {
-            if (!_mIsFileExist)
+            if (!IsExist())
             {
                 return;
             }
