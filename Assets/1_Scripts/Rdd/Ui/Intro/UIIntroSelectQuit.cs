@@ -1,4 +1,3 @@
-using Cf.Scenes;
 using UnityEngine;
 
 public class UIIntroSelectQuit : UIIntroSelect
@@ -10,6 +9,6 @@ public class UIIntroSelectQuit : UIIntroSelect
     
     public override void OnInteract(UIIntroSelector introSelector)
     {
-        SceneHandler.Quit();
+        
     }
 }

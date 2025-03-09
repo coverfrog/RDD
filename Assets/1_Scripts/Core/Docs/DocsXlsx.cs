@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Cf.Docs
 {
-    public class DocsXlsx<T> :Docs<T> where T : class, new()
+    public class DocsXlsx<T> : Docs<T> where T : class, new()
     {
         public DocsXlsx(DocsRoot docsRoot, string[] subPathArr, string fileName, bool isCreateAuto = true) : base(docsRoot, subPathArr, fileName, DocsExtend.Xlsx, isCreateAuto)
         {
@@ -24,44 +24,65 @@ namespace Cf.Docs
                 Directory.CreateDirectory(DocsFolderPath);
             }
             
-            List<MemberInfo> memberList = typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field).ToList();
-            
-            IWorkbook wb = new XSSFWorkbook();
-            ISheet sheet = wb.CreateSheet("Sheet0");
-    
-            IRow headerRow = sheet.CreateRow(0);
-            for (int i = 0; i < memberList.Count; i++)
-            {
-                headerRow.CreateCell(i).SetCellValue(memberList[i].Name);
-            }
-         
-            IRow dataRow = sheet.CreateRow(1);
-            for (int i = 0; i < memberList.Count; i++)
-            {
-                var value = ((FieldInfo)memberList[i]).GetValue(t);
+            var wb = new XSSFWorkbook();
+            var sheet = wb.CreateSheet("Sheet0");
 
-                switch (value)
-                {
-                    case string strValue:
-                        dataRow.CreateCell(i).SetCellValue(strValue);
-                        break;
-                    case int intValue:
-                        dataRow.CreateCell(i).SetCellValue(intValue);
-                        break;
-                    case long longValue:
-                        dataRow.CreateCell(i).SetCellValue(longValue);
-                        break;
-                    case bool boolValue:
-                        dataRow.CreateCell(i).SetCellValue(boolValue);
-                        break;
-                    case float floatValue:
-                        dataRow.CreateCell(i).SetCellValue(floatValue);
-                        break;
-                    default:
-                        dataRow.CreateCell(i).SetCellValue(string.Empty);
-                        break;
-                }
+
+            var rowHead = sheet.CreateRow(0);
+            var rowHeadCursor = 0;
+            
+            rowHead.CreateCell(rowHeadCursor).SetCellValue("index");
+            rowHeadCursor++;
+            
+            
+            foreach (MemberInfo m in typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field))
+            {
+                var field = (FieldInfo)m;
+                
+                rowHead.CreateCell(rowHeadCursor).SetCellValue(field.Name);
+                rowHeadCursor++;
             }
+            
+            
+            // List<MemberInfo> memberList = typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field).ToList();
+            //
+            // IWorkbook wb = new XSSFWorkbook();
+            // ISheet sheet = wb.CreateSheet("Sheet0");
+            //
+            // IRow headerRow = sheet.CreateRow(0);
+            // headerRow.CreateCell(0).SetCellValue("index");
+            // for (int i = 0; i < memberList.Count; i++)
+            // {
+            //     headerRow.CreateCell(i + 1).SetCellValue(memberList[i].Name);
+            // }
+         
+            // IRow dataRow = sheet.CreateRow(1);
+            // for (int i = 0; i < memberList.Count; i++)
+            // {
+            //     var value = ((FieldInfo)memberList[i]).GetValue(t);
+            //
+            //     switch (value)
+            //     {
+            //         case string strValue:
+            //             dataRow.CreateCell(i + 1).SetCellValue(strValue);
+            //             break;
+            //         case int intValue:
+            //             dataRow.CreateCell(i + 1).SetCellValue(intValue);
+            //             break;
+            //         case long longValue:
+            //             dataRow.CreateCell(i + 1).SetCellValue(longValue);
+            //             break;
+            //         case bool boolValue:
+            //             dataRow.CreateCell(i + 1).SetCellValue(boolValue);
+            //             break;
+            //         case float floatValue:
+            //             dataRow.CreateCell(i + 1).SetCellValue(floatValue);
+            //             break;
+            //         default:
+            //             dataRow.CreateCell(i + 1).SetCellValue(string.Empty);
+            //             break;
+            //     }
+            // }
             
             using FileStream stream = new FileStream(DocsPath, FileMode.Create, FileAccess.Write);
             
@@ -88,7 +109,7 @@ namespace Cf.Docs
             
             for (int i = 0; i < headerRow.LastCellNum; i++)
             {
-                var cell = valueRow.GetCell(i);
+                var cell = valueRow.GetCell(i + 1);
                 object value = null;
 
                 switch (cell.CellType)
