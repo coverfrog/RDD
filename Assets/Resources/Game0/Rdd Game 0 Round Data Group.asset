@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c02e07da5352f14cb73aab9c00b10f3, type: 3}
+  m_Name: Rdd Game 0 Round Data Group
+  m_EditorClassIdentifier: 
+  mList:
+  - {fileID: 11400000, guid: 0586d1bb12ccc114897b7895c2ec7f20, type: 2}
+  - {fileID: 11400000, guid: e6664f3ca8640894486643c066b2a93e, type: 2}
+  - {fileID: 11400000, guid: 113afdc81d32a964980fe93cb3bc54a9, type: 2}
+  - {fileID: 11400000, guid: c2f453bc7443c3640835d2991aebde8b, type: 2}
+  - {fileID: 11400000, guid: 339e5d5a37905d64589366cbbb41084c, type: 2}
+  - {fileID: 11400000, guid: f16eb6534bdb1974c95a7d8d252eba7c, type: 2}
+  - {fileID: 11400000, guid: 827865b1001cfb642b52c0f92168b062, type: 2}
+  - {fileID: 11400000, guid: a4ab92187e45d8446bc72c02ad075970, type: 2}
+  - {fileID: 11400000, guid: 099068fde3f115f4e93f492e16f20832, type: 2}
+  - {fileID: 11400000, guid: 47b96f9eff9b0624f89d4057750f8b6b, type: 2}

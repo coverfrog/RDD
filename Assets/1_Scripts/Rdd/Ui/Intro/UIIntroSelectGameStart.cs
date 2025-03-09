@@ -10,6 +10,6 @@ public class UIIntroSelectGameStart : UIIntroSelect
 
     public override void OnInteract(UIIntroSelector introSelector)
     {
-        SceneIntro.SceneToMainMenu(introSelector);
+        
     }
 }
