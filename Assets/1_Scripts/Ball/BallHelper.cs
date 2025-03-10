@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public static class BallEnvConst
+public static class BallOptionConst
 {
     public const double Mass    = 0.0459;               // 질량  
     public const double Area    = 0.001432;             // 표면적
@@ -12,37 +12,41 @@ public static class BallEnvConst
 }
 
 [Serializable]
+public class BallOption
+{
+    public double mass    = BallOptionConst.Mass;       // 질량  
+    public double area    = BallOptionConst.Area;       // 표면적
+    public double density = BallOptionConst.Density;    // 공기 밀도
+    public double cd      = BallOptionConst.Cd;         // 항력 계수
+    public double magnus  = BallOptionConst.Magnus;     // 회전 계수
+}
+
+[Serializable]
 public class BallEnv
 {
-    public double mass    = BallEnvConst.Mass;          // 질량  
-    public double area    = BallEnvConst.Area;          // 표면적
-    public double density = BallEnvConst.Density;       // 공기 밀도
-    public double cd      = BallEnvConst.Cd;            // 항력 계수
-    public double magnus  = BallEnvConst.Magnus;        // 회전 계수
-    [Space]
-    public double windX;
-    public double windZ;
-    public double radius;
-    public double rx;
-    public double ry;
-    public double rz;
+    public Vector3 windDir;
 }
 
 [Serializable]
 public class BallData
 {
-    // public double[] q;
-    // public double[] deltaQ;
-    // public double ds;
-    // public double qScale;
-    // public double[] dq;
+    public Vector3 pos;
+    public GeoType geoType;
+    [Space]
+    public float velocityLinear;
+    public float velocityAngular;
 }
 
 public class BallHelper : MonoBehaviour
 {
+    [SerializeField] private BallOption mOption;
     [SerializeField] private BallEnv mEnv;
+    [SerializeField] private BallData mData;
 
-    public void Compute0()
+    private Ray _mRay;
+    private RaycastHit[] _mHitResult;
+
+    public void OnSwing(SwingInput swingInput)
     {
         
     }
