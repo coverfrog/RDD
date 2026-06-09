@@ -9,13 +9,13 @@ public class PlayerSkillAimState : PlayerState
         context.CancelSkillCast = false;
 
         // 클라이언트 데코레이션: 조준선(범위 인디케이터) 표시
-        Debug.Log($"[Aim] Show Range Indicator for Skill {Owner.CurrentSkillContext.ActiveSkillSlot} (Mode: {Owner.CurrentSkillContext.ActiveCastingMode})");
+        // Debug.Log($"[Aim] Show Range Indicator for Skill {Owner.CurrentSkillContext.ActiveSkillSlot} (Mode: {Owner.CurrentSkillContext.ActiveCastingMode})");
     }
 
     public override void Exit()
     {
         // 조준선 비활성화
-        Debug.Log($"[Aim] Hide Range Indicator");
+        // Debug.Log($"[Aim] Hide Range Indicator");
     }
 
     public override void Update()

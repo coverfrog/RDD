@@ -155,6 +155,8 @@ public class PlayerCtrl : NetworkBehaviour
 
     #endregion
 
+    #region : Unity
+
     private void Awake()
     {
         _ = m_smGroup;
@@ -206,4 +208,17 @@ public class PlayerCtrl : NetworkBehaviour
 
         CurrentInputContext = context;
     }
+
+    #endregion
+
+    #region : Cmd (State 내부에선 직접 Cmd 호출이 불가)
+
+    [Command]
+    public void CmdSpawnProjectile(ProjectileCtrl prefab, Vector3 spawnPosition, Quaternion spawnRotation)
+    {
+        ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
+        NetworkServer.Spawn(instance.gameObject, connectionToClient);
+    }
+
+    #endregion
 }

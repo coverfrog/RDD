@@ -7,7 +7,7 @@ public class SkillEffect : ScriptableObject
     [SerializeField] private bool m_isProjectile;
 
     [Tooltip("날아갈 투사체 오브젝트의 프리팹을 지정합니다.")]
-    [SerializeField] private GameObject m_projectilePrefab;
+    [SerializeField] private ProjectileCtrl m_projectilePrefab;
 
     [Tooltip("투사체가 날아가는 속도를 결정합니다.")]
     [SerializeField] private float m_projectileSpeed = 10f;
@@ -25,7 +25,7 @@ public class SkillEffect : ScriptableObject
     [SerializeField] private GameObject m_hitEffectPrefab;
 
     public bool IsProjectile => m_isProjectile;
-    public GameObject ProjectilePrefab => m_projectilePrefab;
+    public ProjectileCtrl ProjectilePrefab => m_projectilePrefab;
     public float ProjectileSpeed => m_projectileSpeed;
 
     public bool HasSurroundingEffect => m_hasSurroundingEffect;

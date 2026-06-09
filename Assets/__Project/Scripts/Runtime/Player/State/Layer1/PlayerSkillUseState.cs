@@ -53,9 +53,19 @@ public class PlayerSkillUseState : PlayerState
 
         if (skillEffect != null)
         {
-            if (skillEffect.IsProjectile)
+            if (skillEffect.IsProjectile && skillEffect.ProjectilePrefab)
             {
+                Vector3 direction = Owner.CurrentSkillContext.SkillTargetPoint - Owner.transform.position;
+                direction.y = 0;
 
+                Quaternion rotation = direction.sqrMagnitude < 0.001f ? 
+                    Quaternion.identity : 
+                    Quaternion.LookRotation(direction.normalized);
+
+                Owner.CmdSpawnProjectile(
+                    skillEffect.ProjectilePrefab, 
+                    Owner.transform.position,
+                    rotation);
             }
 
             if (skillEffect.HasSurroundingEffect)
