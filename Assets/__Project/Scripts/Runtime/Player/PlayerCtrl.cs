@@ -7,9 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(StatCtrl))]
 public class PlayerCtrl : NetworkBehaviour
 {
-    public InputContext CurrentInputContext { get; set; }
+    public InputContext CurrentInputContext { get; internal set; }
 
-    public SkillContext CurrentSkillContext { get; set; } = new SkillContext();
+    public SkillContext CurrentSkillContext { get; internal set; } 
 
     #region : Rigidbody
 
@@ -84,7 +84,10 @@ public class PlayerCtrl : NetworkBehaviour
                         {
                             SkillContext context = CurrentSkillContext;
                             context.ActiveSkillSlot = i;
-                            context.ActiveCastingMode = context.GetSkillCastingMode(i);
+                            if (context.TryGetSkillCastingMode(this, out CastingMode castingMode))
+                            {
+                                context.ActiveCastingMode = castingMode;
+                            }
 
                             CurrentSkillContext = context;
 
@@ -104,7 +107,10 @@ public class PlayerCtrl : NetworkBehaviour
                         {
                             SkillContext context = CurrentSkillContext;
                             context.ActiveSkillSlot = i;
-                            context.ActiveCastingMode = context.GetSkillCastingMode(i);
+                            if (context.TryGetSkillCastingMode(this, out CastingMode castingMode))
+                            {
+                                context.ActiveCastingMode = castingMode;
+                            }
 
                             CurrentSkillContext = context;
 
@@ -153,6 +159,35 @@ public class PlayerCtrl : NetworkBehaviour
     private void Awake()
     {
         _ = m_smGroup;
+
+        CurrentInputContext = new();
+
+        CurrentSkillContext = new SkillContext()
+        {
+            RuntimeInfos = new SkillRuntimeData[4]
+        {
+            new SkillRuntimeData()
+            {
+                ID = 1,
+                Level = 1,
+            },
+            new SkillRuntimeData()
+            {
+                ID = 2,
+                Level = 1,
+            },
+            new SkillRuntimeData()
+            {
+                ID = 3,
+                Level = 1,
+            },
+            new SkillRuntimeData()
+            {
+                ID = 4,
+                Level = 1,
+            }
+        }
+        };
     }
 
     private void Update()

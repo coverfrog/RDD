@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSkillUseState : PlayerState
@@ -7,17 +8,24 @@ public class PlayerSkillUseState : PlayerState
 
     public override void Enter()
     {
+        // : 내부 정보 갱신
+
+        if (Owner.CurrentSkillContext.TryGetSlotSkillDuration(Owner, out float duration))
+        {
+            m_duration = duration;
+        }
         m_startTime = Time.time;
-        m_duration = GetSkillDuration(Owner.CurrentSkillContext.ActiveSkillSlot);
+
+        // : Context 갱신
 
         SkillContext context = Owner.CurrentSkillContext;
         context.IsSkillCastingFinished = false;
 
         Owner.CurrentSkillContext = context;
 
-        Debug.Log($"[Cast] Skill {Owner.CurrentSkillContext.ActiveSkillSlot} casted at {Owner.CurrentSkillContext.SkillTargetPoint}!");
+        // : Skill 사용
 
-        // TODO: 실제 서버 스킬 효과 발동 및 클라이언트 이펙트/사운드 재생
+        UseSkill();
     }
 
     public override void Update()
@@ -31,15 +39,14 @@ public class PlayerSkillUseState : PlayerState
         }
     }
 
-    private float GetSkillDuration(int slot)
+    private void UseSkill()
     {
-        switch (slot)
+        if (Owner.CurrentSkillContext.TryGetSlotSkill(Owner, out SkillData skillData, out SkillLevelData levelData) == false)
         {
-            case 0: return 1.0f;
-            case 1: return 1.5f;
-            case 2: return 0.8f;
-            case 3: return 2.0f;
-            default: return 1.0f;
+            return;
         }
+
+        // : Log
+        Debug.Log($"skill use at {skillData.name}");
     }
 }

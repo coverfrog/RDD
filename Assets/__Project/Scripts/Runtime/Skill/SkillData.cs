@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct SkillLevelData
+public class SkillLevelData
 {
     public int Level;
     public float Damage;
@@ -11,12 +11,13 @@ public struct SkillLevelData
 }
 
 [CreateAssetMenu(fileName = "NewSkillInfo", menuName = "RDD/SkillInfo")]
-public class SkillInfo : ScriptableObject
+public class SkillData : ScriptableObject
 {
     [SerializeField] private CastingMode m_castingMode;
     [SerializeField] private List<SkillLevelData> m_levelDataList = new List<SkillLevelData>();
 
     public CastingMode CastingMode => m_castingMode;
+
     public List<SkillLevelData> LevelDataList => m_levelDataList;
 
     public SkillLevelData GetLevelData(int level)

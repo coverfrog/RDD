@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 408a33e7cc955a2469f904d80c42f934, type: 3}
-  m_Name: fireball
+  m_Name: dash
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_castingMode: 0
   m_levelDataList:
   - Level: 1
-    Damage: 1
+    Damage: 0
     Duration: 1
-  - Level: 1
-    Damage: 3
+  - Level: 2
+    Damage: 0
     Duration: 1

@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public struct SkillContext 
 {
     /// <summary>
@@ -32,14 +35,82 @@ public struct SkillContext
     /// </summary>
     public bool IsSkillCastingFinished;
 
-    public CastingMode GetSkillCastingMode(int slotIndex)
+    /// <summary>
+    /// 런타임
+    /// </summary>
+    public SkillRuntimeData[] RuntimeInfos;
+
+    public bool TryGetSkillCastingMode(PlayerCtrl owner, out CastingMode castingMode)
     {
-        // 예시: 0번 스킬은 일반 시전, 1번 스킬은 즉시 시전, 2번 스킬은 키 떼기 시전
-        // 테스트 용도
-        if (slotIndex == 0) 
-            return CastingMode.Normal;
-        if (slotIndex == 1) 
-            return CastingMode.Quick;
-        return CastingMode.QuickOnRelease;
+        if (TryGetSlotSkill(owner, out SkillData skillData, out SkillLevelData levelData))
+        {
+            castingMode = skillData.CastingMode;
+            return true;
+        }
+
+        castingMode = CastingMode.Quick;
+
+        return false;
+    }
+
+    public bool TryGetSlotSkillDuration(PlayerCtrl owner, out float duration)
+    {
+        if (TryGetSlotSkill(owner, out SkillData skillData, out SkillLevelData levelData))
+        {
+            duration = levelData.Duration;
+            return true;
+        }
+
+        duration = -1.0f;
+
+        return false;
+    }
+
+    public bool TryGetSlotSkill(PlayerCtrl owner, out SkillData skillData, out SkillLevelData levelData)
+    {
+        int slot = ActiveSkillSlot;
+
+        SkillRuntimeData[] runtimeDataArr = owner.CurrentSkillContext.RuntimeInfos;
+        if (runtimeDataArr.Length == 0 || slot > runtimeDataArr.Length - 1)
+        {
+            Debug.LogError($"Error");
+
+            skillData = null;
+            levelData = null;
+
+            return false;
+        }
+
+        SkillRuntimeData runtimeInfo = runtimeDataArr[slot];
+        if (runtimeInfo.Level == 0)
+        {
+            Debug.LogError("Error");
+
+            skillData = null;
+            levelData = null;
+
+            return false;
+        }
+
+        if (DataManager.Instance.SkillInfos.TryGetValue(runtimeInfo.ID, out skillData) == false)
+        {
+            skillData = null;
+            levelData = null;
+
+            return false;
+        }
+
+        List<SkillLevelData> levelDataList = skillData.LevelDataList;
+        if (runtimeInfo.Level > levelDataList.Count)
+        {
+            skillData = null;
+            levelData = null;
+
+            return false;
+        }
+
+        levelData = levelDataList[runtimeInfo.Level - 1];
+
+        return true;
     }
 }
