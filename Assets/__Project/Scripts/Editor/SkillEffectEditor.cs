@@ -29,6 +29,10 @@ public class SkillEffectEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        GUI.enabled = false;
+        EditorGUILayout.ObjectField("Script", MonoScript.FromScriptableObject((ScriptableObject)target), typeof(MonoScript), false);
+        GUI.enabled = true;
+
         serializedObject.Update();
 
         EditorGUILayout.Space();

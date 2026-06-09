@@ -19,6 +19,10 @@ public class SkillDataEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        GUI.enabled = false;
+        EditorGUILayout.ObjectField("Script", MonoScript.FromScriptableObject((ScriptableObject)target), typeof(MonoScript), false);
+        GUI.enabled = true;
+
         serializedObject.Update();
 
         // 에셋의 ID를 표시 (ReadOnly이므로 비활성화된 것처럼 표시하거나 기본 Draw)
