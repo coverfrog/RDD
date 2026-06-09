@@ -5,6 +5,7 @@ using UnityEngine;
 [Serializable]
 public class SkillLevelData
 {
+    [ReadOnly]
     public int Level;
     public float Damage;
     public float Duration;
@@ -13,8 +14,12 @@ public class SkillLevelData
 [CreateAssetMenu(fileName = "NewSkillInfo", menuName = "RDD/SkillInfo")]
 public class SkillData : ScriptableObject
 {
+    [ReadOnly]
+    [SerializeField] private ulong m_id;
     [SerializeField] private CastingMode m_castingMode;
     [SerializeField] private List<SkillLevelData> m_levelDataList = new List<SkillLevelData>();
+
+    public ulong ID => m_id;
 
     public CastingMode CastingMode => m_castingMode;
 
