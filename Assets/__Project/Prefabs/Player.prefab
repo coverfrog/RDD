@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4913935655872612546}
   - component: {fileID: -7273608945118404429}
+  - component: {fileID: 8480590818410509619}
   - component: {fileID: 3091680920975811772}
   - component: {fileID: 4842989768842164914}
   - component: {fileID: 6168446899306945878}
@@ -54,6 +55,18 @@ MonoBehaviour:
   syncInterval: 0
   moveSpeed: 5
   rotateSpeed: 10
+--- !u!114 &8480590818410509619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203007813258481517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39fa3dccd267f6c46b5e130729828419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatCtrl
 --- !u!114 &3091680920975811772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160,7 +173,7 @@ GameObject:
   - component: {fileID: 8076311875409860896}
   - component: {fileID: 239083091001852790}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +227,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1b6f56998efd2b84abd7301b24a73e24, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

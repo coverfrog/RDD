@@ -2,15 +2,12 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkIdentity))]
-[RequireComponent(typeof(InputNetworkSender))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(InputNetworkSender))]
+[RequireComponent(typeof(StatCtrl))]
 public class PlayerCtrl : NetworkBehaviour
 {
     public InputContext CurrentInputContext { get; set; }
-
-    [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float rotateSpeed = 10f;
 
     #region : Rigidbody
 
@@ -27,7 +24,23 @@ public class PlayerCtrl : NetworkBehaviour
 
     #endregion
 
-    #region : StateMachine Group
+    #region : StatCtrl
+
+
+    public StatCtrl StatCtrl
+    {
+        get
+        {
+            if (m_statCtrl == null) m_statCtrl = GetComponent<StatCtrl>();
+            return m_statCtrl;
+        }
+    }
+
+    internal StatCtrl m_statCtrl;
+
+    #endregion
+
+    #region : StateMachineGroup
 
     public StateMachineGroup<PlayerCtrl> SmGroup
     {

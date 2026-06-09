@@ -44,17 +44,21 @@ public class PlayerMoveState : PlayerState
 
     private void SetVelocity(Vector3 direction)
     {
+        float moveSpeed = Owner.StatCtrl.MoveSpeed;
         Vector3 currentVel = Owner.Rb3d.linearVelocity;
-        Owner.Rb3d.linearVelocity = new Vector3(direction.x * Owner.moveSpeed, currentVel.y, direction.z * Owner.moveSpeed);
+
+        Owner.Rb3d.linearVelocity = new Vector3(direction.x * moveSpeed, currentVel.y, direction.z * moveSpeed);
     }
 
     private void SetRotation(Vector3 direction)
     {
+        float rotateSpeed = Owner.StatCtrl.RotateSpeed;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
+
         Owner.transform.rotation = Quaternion.Slerp(
             Owner.transform.rotation,
             targetRotation,
-            Time.fixedDeltaTime * Owner.rotateSpeed
+            Time.fixedDeltaTime * rotateSpeed
         );
     }
 }
