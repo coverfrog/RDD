@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: Fireball
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_castingMode: 0
-  m_duration: 0
+  m_levelDataList:
+  - Level: 0
+    Damage: 0
+    Duration: 0
+  - Level: 0
+    Damage: 0
+    Duration: 0

@@ -1,11 +1,40 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+[Serializable]
+public struct SkillLevelData
+{
+    public int Level;
+    public float Damage;
+    public float Duration;
+}
 
 [CreateAssetMenu(fileName = "NewSkillInfo", menuName = "RDD/SkillInfo")]
 public class SkillInfo : ScriptableObject
 {
     [SerializeField] private CastingMode m_castingMode;
-    [SerializeField] private float m_duration;
+    [SerializeField] private List<SkillLevelData> m_levelDataList = new List<SkillLevelData>();
 
     public CastingMode CastingMode => m_castingMode;
-    public float Duration => m_duration;
+    public List<SkillLevelData> LevelDataList => m_levelDataList;
+
+    public SkillLevelData GetLevelData(int level)
+    {
+        if (m_levelDataList == null || m_levelDataList.Count == 0)
+        {
+            Debug.LogWarning($"[SkillInfo] LevelDataList is empty for {name}");
+            return default;
+        }
+
+        for (int i = 0; i < m_levelDataList.Count; i++)
+        {
+            if (m_levelDataList[i].Level == level)
+            {
+                return m_levelDataList[i];
+            }
+        }
+
+        return m_levelDataList[m_levelDataList.Count - 1];
+    }
 }
