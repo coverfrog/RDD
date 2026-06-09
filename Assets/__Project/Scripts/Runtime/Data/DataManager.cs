@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -9,7 +10,7 @@ public class DataManager : MonoBehaviour
 
     public bool IsLoaded { get; private set; }
 
-    public Dictionary<ulong, SkillData> SkillInfos { get; private set; } = new Dictionary<ulong, SkillData>();
+    public Dictionary<ulong, SkillData> SkillInfos { get; private set; }
 
     private void Awake()
     {
@@ -26,11 +27,7 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        SkillInfos.Clear();
-        SkillInfos.Add(1, Resources.Load<SkillData>("Skills/dash"));
-        SkillInfos.Add(2, Resources.Load<SkillData>("Skills/fireball"));
-        SkillInfos.Add(3, Resources.Load<SkillData>("Skills/sacrifice"));
-        SkillInfos.Add(4, Resources.Load<SkillData>("Skills/teleport"));
+        SkillInfos = Resources.LoadAll<SkillData>("Skills/Skill").ToDictionary(x => x.ID, x => x);
 
         IsLoaded = true;
     }

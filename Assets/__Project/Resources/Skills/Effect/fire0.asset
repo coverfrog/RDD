@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b75a2cd67e83b646b704946db27ae86, type: 3}
-  m_Name: NewSkillEffect
+  m_Name: fire0
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffect
   m_isProjectile: 1
   m_projectilePrefab: {fileID: 0}

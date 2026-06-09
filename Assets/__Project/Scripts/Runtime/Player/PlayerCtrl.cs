@@ -7,9 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(StatCtrl))]
 public class PlayerCtrl : NetworkBehaviour
 {
-    public InputContext CurrentInputContext { get; internal set; }
-
-    public SkillContext CurrentSkillContext { get; internal set; } 
+    public InputContext CurrentInputContext;
+    public SkillContext CurrentSkillContext;
 
     #region : Rigidbody
 

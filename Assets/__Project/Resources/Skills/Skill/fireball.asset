@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 408a33e7cc955a2469f904d80c42f934, type: 3}
-  m_Name: dash
+  m_Name: fireball
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  m_id: 1
+  m_id: 3
   m_castingMode: 0
   m_levelDataList:
   - Level: 1
-    Damage: 0
+    Damage: 1
     Duration: 1
+    m_skillEffect: {fileID: 11400000, guid: ef8d5accb18519f468e039173244d79b, type: 2}
   - Level: 2
-    Damage: 0
+    Damage: 3
     Duration: 1
+    m_skillEffect: {fileID: 11400000, guid: ef8d5accb18519f468e039173244d79b, type: 2}
