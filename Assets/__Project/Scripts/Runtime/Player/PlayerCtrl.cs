@@ -214,9 +214,11 @@ public class PlayerCtrl : NetworkBehaviour
     #region : Cmd (State 내부에선 직접 Cmd 호출이 불가)
 
     [Command]
-    public void CmdSpawnProjectile(ProjectileCtrl prefab, Vector3 spawnPosition, Quaternion spawnRotation)
+    public void CmdSpawnProjectile(ProjectileCtrl prefab, Vector3 spawnPosition, Quaternion spawnRotation, float speed)
     {
         ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
+        instance.Setup(speed);
+        // NetworkServer.Spawn(instance.gameObject);
         NetworkServer.Spawn(instance.gameObject, connectionToClient);
     }
 

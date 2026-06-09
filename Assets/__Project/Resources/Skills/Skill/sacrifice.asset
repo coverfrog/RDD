@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 408a33e7cc955a2469f904d80c42f934, type: 3}
   m_Name: sacrifice
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
-  m_id: 2
+  m_id: 3
   m_castingMode: 1
   m_levelDataList:
   - Level: 1
     Damage: 10
     Duration: 1
+    m_skillEffect: {fileID: 0}
   - Level: 2
     Damage: 20
     Duration: 1
+    m_skillEffect: {fileID: 0}

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: fire0
   m_EditorClassIdentifier: Assembly-CSharp::SkillEffect
   m_isProjectile: 1
-  m_projectile: {fileID: 8005969605012067915, guid: fcbee1a1a4e200e4b834f93092b9a4b6, type: 3}
+  m_projectilePrefab: {fileID: 8005969605012067915, guid: fcbee1a1a4e200e4b834f93092b9a4b6, type: 3}
   m_projectileSpeed: 10
   m_hasSurroundingEffect: 0
   m_surroundingEffectPrefab: {fileID: 0}

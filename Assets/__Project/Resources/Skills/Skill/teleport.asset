@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: teleport
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_id: 4
-  m_castingMode: 0
+  m_castingMode: 2
   m_levelDataList:
   - Level: 1
     Damage: 0

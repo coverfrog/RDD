@@ -65,7 +65,8 @@ public class PlayerSkillUseState : PlayerState
                 Owner.CmdSpawnProjectile(
                     skillEffect.ProjectilePrefab, 
                     Owner.transform.position,
-                    rotation);
+                    rotation,
+                    skillEffect.ProjectileSpeed);
             }
 
             if (skillEffect.HasSurroundingEffect)

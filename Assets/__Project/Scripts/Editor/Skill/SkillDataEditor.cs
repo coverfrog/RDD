@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 [CustomEditor(typeof(SkillData))]
 public class SkillDataEditor : Editor
@@ -112,16 +113,15 @@ public class SkillDataEditor : Editor
             }
         }
 
-        // 2. ID 자동 부여 (0이거나 중복인 경우)
+        // 2. ID 자동 부여: 이름 순 정렬 기준으로 전체 재계산 후 자신의 순번을 ID로 할당
         if (m_idProp != null)
         {
-            ulong currentId = (ulong)m_idProp.longValue;
-            if (currentId == 0 || IsDuplicateID(currentId, target as SkillData))
+            ulong assignedId = GetNameSortedId(target as SkillData);
+            if ((ulong)m_idProp.longValue != assignedId)
             {
-                ulong newId = GenerateUniqueID();
-                m_idProp.longValue = (long)newId;
+                m_idProp.longValue = (long)assignedId;
                 changed = true;
-                Debug.Log($"[SkillDataEditor] Assigned new unique ID {newId} to SkillData '{target.name}'");
+                Debug.Log($"[SkillDataEditor] '{target.name}' → ID {assignedId} 할당 (이름 순 정렬 기준)");
             }
         }
 
@@ -133,113 +133,73 @@ public class SkillDataEditor : Editor
         }
     }
 
-    private bool IsDuplicateID(ulong id, SkillData currentAsset)
+    /// <summary>
+    /// 프로젝트 내 전체 SkillData를 에셋 이름 기준 오름차순으로 정렬한 뒤,
+    /// 현재 에셋(self)의 순번(1-based)을 반환합니다.
+    /// </summary>
+    private static ulong GetNameSortedId(SkillData self)
     {
-        string[] guids = AssetDatabase.FindAssets("t:SkillData");
-        foreach (string guid in guids)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-            if (skill != null && skill != currentAsset && skill.ID == id)
-            {
-                return true;
-            }
-        }
-        return false;
+        List<SkillData> all = LoadAllSkillDataSortedByName();
+        int index = all.IndexOf(self);
+        return index >= 0 ? (ulong)(index + 1) : 1;
     }
 
-    private ulong GenerateUniqueID()
+    /// <summary>
+    /// 프로젝트 내 전체 SkillData 에셋을 이름 오름차순으로 정렬하여 반환합니다.
+    /// </summary>
+    private static List<SkillData> LoadAllSkillDataSortedByName()
     {
         string[] guids = AssetDatabase.FindAssets("t:SkillData");
-        ulong maxId = 0;
-        HashSet<ulong> existingIds = new HashSet<ulong>();
+        List<SkillData> list = new List<SkillData>(guids.Length);
 
         foreach (string guid in guids)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
             SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-            if (skill != null && skill.ID != 0)
+            if (skill != null)
             {
-                existingIds.Add(skill.ID);
-                if (skill.ID > maxId)
-                {
-                    maxId = skill.ID;
-                }
+                list.Add(skill);
             }
         }
 
-        ulong newId = maxId + 1;
-        while (existingIds.Contains(newId) || newId == 0)
-        {
-            newId++;
-        }
-        return newId;
+        // 에셋 이름 기준 오름차순 정렬 (대소문자 무시)
+        list.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.OrdinalIgnoreCase));
+        return list;
     }
 
     // 일괄 관리를 위한 메뉴 기능
     [MenuItem("RDD/Manage/Verify and Assign Skill Data")]
     public static void VerifyAndAssignAllSkills()
     {
-        string[] guids = AssetDatabase.FindAssets("t:SkillData");
+        // 이름 순 정렬된 전체 목록
+        List<SkillData> sorted = LoadAllSkillDataSortedByName();
         int count = 0;
 
-        // 1단계: 유효한 ID를 가진 스킬들의 ID를 수집
-        HashSet<ulong> activeIds = new HashSet<ulong>();
-        List<SkillData> skillsToAssign = new List<SkillData>();
-
-        foreach (string guid in guids)
+        // 1단계: 이름 순 순번(1-based)으로 ID 일괄 재할당
+        for (int i = 0; i < sorted.Count; i++)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-            if (skill == null) continue;
+            SkillData skill = sorted[i];
+            ulong expectedId = (ulong)(i + 1);
 
-            if (skill.ID != 0 && !activeIds.Contains(skill.ID))
-            {
-                activeIds.Add(skill.ID);
-            }
-            else
-            {
-                skillsToAssign.Add(skill);
-            }
-        }
-
-        // 2단계: ID가 없거나 중복인 스킬들에게 고유 ID를 순서대로 할당
-        ulong currentMaxId = 0;
-        foreach (ulong id in activeIds)
-        {
-            if (id > currentMaxId) currentMaxId = id;
-        }
-
-        ulong nextAvailableId = currentMaxId + 1;
-
-        foreach (SkillData skill in skillsToAssign)
-        {
             SerializedObject so = new SerializedObject(skill);
             SerializedProperty idProp = so.FindProperty("m_id");
             if (idProp != null)
             {
-                while (activeIds.Contains(nextAvailableId) || nextAvailableId == 0)
-                {
-                    nextAvailableId++;
-                }
-
                 so.Update();
-                idProp.longValue = (long)nextAvailableId;
-                so.ApplyModifiedProperties();
-
-                activeIds.Add(nextAvailableId);
-                Debug.Log($"[SkillDataEditor] 일괄 처리: '{skill.name}' 스킬에 고유 ID {nextAvailableId} 할당");
-                count++;
+                if ((ulong)idProp.longValue != expectedId)
+                {
+                    idProp.longValue = (long)expectedId;
+                    so.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(skill);
+                    Debug.Log($"[SkillDataEditor] 일괄 처리: '{skill.name}' → ID {expectedId} 할당 (이름 순 {i + 1}번째)");
+                    count++;
+                }
             }
         }
 
-        // 3단계: 전체 스킬에 대해 levelDataList 개수(최소 1개) 및 레벨 순서 보정
-        foreach (string guid in guids)
+        // 2단계: 전체 스킬에 대해 levelDataList 개수(최소 1개) 및 레벨 순서 보정
+        foreach (SkillData skill in sorted)
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            SkillData skill = AssetDatabase.LoadAssetAtPath<SkillData>(path);
-            if (skill == null) continue;
-
             SerializedObject so = new SerializedObject(skill);
             SerializedProperty listProp = so.FindProperty("m_levelDataList");
             bool changed = false;
@@ -274,6 +234,6 @@ public class SkillDataEditor : Editor
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log($"[SkillDataEditor] 일괄 검사 완료. 총 {count}개의 스킬 ID를 신규 할당/보정했습니다.");
+        Debug.Log($"[SkillDataEditor] 일괄 검사 완료. 총 {count}개의 스킬 ID를 이름 순 기준으로 재할당했습니다.");
     }
 }
