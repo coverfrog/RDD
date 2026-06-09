@@ -12,6 +12,12 @@ public class PlayerSkillAimState : PlayerState
         Debug.Log($"[Aim] Show Range Indicator for Skill {Owner.CurrentSkillContext.ActiveSkillSlot} (Mode: {Owner.CurrentSkillContext.ActiveCastingMode})");
     }
 
+    public override void Exit()
+    {
+        // 조준선 비활성화
+        Debug.Log($"[Aim] Hide Range Indicator");
+    }
+
     public override void Update()
     {
         int slot = Owner.CurrentSkillContext.ActiveSkillSlot;
@@ -50,11 +56,6 @@ public class PlayerSkillAimState : PlayerState
                 Owner.CurrentSkillContext = skilContext;
             }
         }
-    }
-    public override void Exit()
-    {
-        // 조준선 비활성화
-        Debug.Log($"[Aim] Hide Range Indicator");
     }
 
     private Vector3 GetMouseGroundPoint()

@@ -42,7 +42,7 @@ public struct SkillContext
 
     public bool TryGetSkillCastingMode(PlayerCtrl owner, out CastingMode castingMode)
     {
-        if (TryGetSlotSkill(owner, out SkillData skillData, out SkillLevelData levelData))
+        if (TryGetSlotSkill(owner, out SkillData skillData, out _))
         {
             castingMode = skillData.CastingMode;
             return true;
@@ -55,7 +55,7 @@ public struct SkillContext
 
     public bool TryGetSlotSkillDuration(PlayerCtrl owner, out float duration)
     {
-        if (TryGetSlotSkill(owner, out SkillData skillData, out SkillLevelData levelData))
+        if (TryGetSlotSkill(owner, out _, out SkillLevelData levelData))
         {
             duration = levelData.Duration;
             return true;
