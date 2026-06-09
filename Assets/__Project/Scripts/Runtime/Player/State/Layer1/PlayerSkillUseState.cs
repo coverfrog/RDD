@@ -48,5 +48,25 @@ public class PlayerSkillUseState : PlayerState
 
         // : Log
         Debug.Log($"skill use at {skillData.name}");
+
+        SkillEffect skillEffect = levelData.SkillEffect;
+
+        if (skillEffect != null)
+        {
+            if (skillEffect.IsProjectile)
+            {
+
+            }
+
+            if (skillEffect.HasSurroundingEffect)
+            {
+
+            }
+
+            if (skillEffect.HasHitEffect)
+            {
+
+            }
+        }
     }
 }
