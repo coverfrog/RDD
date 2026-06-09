@@ -77,6 +77,9 @@ public class PlayerCtrl : NetworkBehaviour
                 // 대기 -> 조준
                 m_smGroup.AddTransition(1, "None", "Aim", () =>
                 {
+                    if (isLocalPlayer == false)
+                        return false;
+
                     for (int i = 0; i < 4; i++)
                     {
                         if (CurrentInputContext.GetSlotClick(i))
@@ -100,6 +103,9 @@ public class PlayerCtrl : NetworkBehaviour
                 // 대기 -> 즉시 시전
                 m_smGroup.AddTransition(1, "None", "Cast", () =>
                 {
+                    if (isLocalPlayer == false)
+                        return false;
+
                     for (int i = 0; i < 4; i++)
                     {
                         if (CurrentInputContext.GetSlotClick(i))
@@ -134,13 +140,13 @@ public class PlayerCtrl : NetworkBehaviour
                 });
 
                 // 조준 -> 시전
-                m_smGroup.AddTransition(1, "Aim", "Cast", () => CurrentSkillContext.TriggerSkillCast);
+                m_smGroup.AddTransition(1, "Aim", "Cast", () => isLocalPlayer == true && CurrentSkillContext.TriggerSkillCast);
 
                 // 조준 -> 취소
-                m_smGroup.AddTransition(1, "Aim", "None", () => CurrentSkillContext.CancelSkillCast);
+                m_smGroup.AddTransition(1, "Aim", "None", () => isLocalPlayer == true && CurrentSkillContext.CancelSkillCast);
 
                 // 시전 완료 ➔ 대기 복귀
-                m_smGroup.AddTransition(1, "Cast", "None", () => CurrentSkillContext.IsSkillCastingFinished);
+                m_smGroup.AddTransition(1, "Cast", "None", () => isLocalPlayer == true && CurrentSkillContext.IsSkillCastingFinished);
 
                 #endregion
 
@@ -214,11 +220,39 @@ public class PlayerCtrl : NetworkBehaviour
     #region : Cmd (State 내부에선 직접 Cmd 호출이 불가)
 
     [Command]
-    public void CmdSpawnProjectile(ProjectileCtrl prefab, Vector3 spawnPosition, Quaternion spawnRotation, float speed)
+    public void CmdSpawnProjectile(ulong skillId, int level, Vector3 spawnPosition, Quaternion spawnRotation)
     {
+        if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
+        {
+            Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
+            return;
+        }
+
+        if (!DataManager.Instance.SkillInfos.TryGetValue(skillId, out SkillData skillData))
+        {
+            Debug.LogError($"[PlayerCtrl] SkillData not found for ID: {skillId}");
+            return;
+        }
+
+        SkillLevelData levelData = skillData.GetLevelData(level);
+        if (levelData == null || levelData.SkillEffect == null)
+        {
+            Debug.LogError($"[PlayerCtrl] SkillEffect not found for Skill ID: {skillId}, Level: {level}");
+            return;
+        }
+
+        SkillEffect skillEffect = levelData.SkillEffect;
+        if (!skillEffect.IsProjectile || skillEffect.ProjectilePrefab == null)
+        {
+            Debug.LogError($"[PlayerCtrl] Skill ID: {skillId} is not a projectile skill or prefab is null");
+            return;
+        }
+
+        ProjectileCtrl prefab = skillEffect.ProjectilePrefab;
+        float speed = skillEffect.ProjectileSpeed;
+
         ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
         instance.Setup(speed);
-        // NetworkServer.Spawn(instance.gameObject);
         NetworkServer.Spawn(instance.gameObject, connectionToClient);
     }
 

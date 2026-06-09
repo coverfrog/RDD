@@ -46,6 +46,11 @@ public class PlayerSkillUseState : PlayerState
             return;
         }
 
+        if (Owner.isLocalPlayer == false)
+        {
+            return;
+        }
+
         // : Log
         Debug.Log($"skill use at {skillData.name}");
 
@@ -63,10 +68,10 @@ public class PlayerSkillUseState : PlayerState
                     Quaternion.LookRotation(direction.normalized);
 
                 Owner.CmdSpawnProjectile(
-                    skillEffect.ProjectilePrefab, 
+                    skillData.ID,
+                    levelData.Level,
                     Owner.transform.position,
-                    rotation,
-                    skillEffect.ProjectileSpeed);
+                    rotation);
             }
 
             if (skillEffect.HasSurroundingEffect)

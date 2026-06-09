@@ -7,6 +7,21 @@ public class ProjectileCtrl : NetworkBehaviour
     [SyncVar]
     private float m_speed;
 
+    #region : Rigidbody
+
+    public Rigidbody Rb3d
+    {
+        get
+        {
+            if (m_rb3d == null) m_rb3d = GetComponent<Rigidbody>();
+            return m_rb3d;
+        }
+    }
+
+    internal Rigidbody m_rb3d;
+
+    #endregion
+
     public void Setup(float speed)
     {
         m_speed = speed;
@@ -18,8 +33,11 @@ public class ProjectileCtrl : NetworkBehaviour
         Destroy(gameObject, 5f);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        transform.Translate(Vector3.forward * (m_speed * Time.deltaTime));
+        if (Rb3d.isKinematic == true)
+            return;
+
+        Rb3d.linearVelocity = transform.forward* m_speed;
     }
 }
