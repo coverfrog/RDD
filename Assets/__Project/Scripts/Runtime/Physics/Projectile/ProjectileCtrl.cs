@@ -47,37 +47,29 @@ public class ProjectileCtrl : NetworkBehaviour
         Rb3d.linearVelocity = transform.forward* m_speed;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCol(GameObject obj)
     {
-        // 충돌/데미지 판정은 서버에서만 신뢰성 있게 처리
-        if (!isServer) return;
+        if (isServer == false) return;
 
-        PlayerCtrl hitPlayer = other.GetComponentInParent<PlayerCtrl>();
+        PlayerCtrl hitPlayer = obj.GetComponentInParent<PlayerCtrl>();
         if (hitPlayer != null)
         {
-            // 자신(투사체 시전자)과의 충돌은 제외
-            if (hitPlayer == m_owner) return;
+            if (hitPlayer == m_owner)
+                return;
 
             OnHitPlayer?.Invoke(hitPlayer);
 
-            // 다른 플레이어 피격 시 투사체 파괴
             NetworkServer.Destroy(gameObject);
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        OnCol(other.gameObject);
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (!isServer) return;
-
-        PlayerCtrl hitPlayer = collision.gameObject.GetComponentInParent<PlayerCtrl>();
-        if (hitPlayer != null)
-        {
-            if (hitPlayer == m_owner) return;
-
-            OnHitPlayer?.Invoke(hitPlayer);
-
-            // 다른 플레이어 피격 시 투사체 파괴
-            NetworkServer.Destroy(gameObject);
-        }
+        OnCol(collision.gameObject);
     }
 }
