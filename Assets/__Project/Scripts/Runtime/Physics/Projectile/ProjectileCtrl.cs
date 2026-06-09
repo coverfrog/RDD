@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(NetworkIdentity))]
@@ -6,6 +7,10 @@ public class ProjectileCtrl : NetworkBehaviour
 {
     [SyncVar]
     private float m_speed;
+
+    private PlayerCtrl m_owner;
+
+    public event Action<PlayerCtrl> OnHitPlayer;
 
     #region : Rigidbody
 
@@ -22,8 +27,9 @@ public class ProjectileCtrl : NetworkBehaviour
 
     #endregion
 
-    public void Setup(float speed)
+    public void Setup(PlayerCtrl owner, float speed)
     {
+        m_owner = owner;
         m_speed = speed;
     }
 
@@ -39,5 +45,39 @@ public class ProjectileCtrl : NetworkBehaviour
             return;
 
         Rb3d.linearVelocity = transform.forward* m_speed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 충돌/데미지 판정은 서버에서만 신뢰성 있게 처리
+        if (!isServer) return;
+
+        PlayerCtrl hitPlayer = other.GetComponentInParent<PlayerCtrl>();
+        if (hitPlayer != null)
+        {
+            // 자신(투사체 시전자)과의 충돌은 제외
+            if (hitPlayer == m_owner) return;
+
+            OnHitPlayer?.Invoke(hitPlayer);
+
+            // 다른 플레이어 피격 시 투사체 파괴
+            NetworkServer.Destroy(gameObject);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!isServer) return;
+
+        PlayerCtrl hitPlayer = collision.gameObject.GetComponentInParent<PlayerCtrl>();
+        if (hitPlayer != null)
+        {
+            if (hitPlayer == m_owner) return;
+
+            OnHitPlayer?.Invoke(hitPlayer);
+
+            // 다른 플레이어 피격 시 투사체 파괴
+            NetworkServer.Destroy(gameObject);
+        }
     }
 }

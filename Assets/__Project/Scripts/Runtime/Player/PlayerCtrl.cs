@@ -252,7 +252,7 @@ public class PlayerCtrl : NetworkBehaviour
         float speed = skillEffect.ProjectileSpeed;
 
         ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
-        instance.Setup(speed);
+        instance.Setup(this, speed);
         NetworkServer.Spawn(instance.gameObject, connectionToClient);
     }
 
