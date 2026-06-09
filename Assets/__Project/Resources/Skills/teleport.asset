@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 408a33e7cc955a2469f904d80c42f934, type: 3}
   m_Name: teleport
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
+  m_id: 4
   m_castingMode: 0
   m_levelDataList:
   - Level: 1
-    Damage: 0
-    Duration: 1
-  - Level: 2
     Damage: 0
     Duration: 1
