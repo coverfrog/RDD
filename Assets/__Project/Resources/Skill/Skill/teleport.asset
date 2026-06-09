@@ -18,3 +18,8 @@ MonoBehaviour:
   - Level: 1
     Damage: 0
     Duration: 1
+    m_skillEffect: {fileID: 0}
+  - Level: 2
+    Damage: 0
+    Duration: 1
+    m_skillEffect: {fileID: 0}

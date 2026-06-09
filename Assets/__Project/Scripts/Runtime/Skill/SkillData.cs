@@ -9,6 +9,9 @@ public class SkillLevelData
     public int Level;
     public float Damage;
     public float Duration;
+
+    [SerializeField] private SkillEffect m_skillEffect;
+    public SkillEffect SkillEffect => m_skillEffect;
 }
 
 [CreateAssetMenu(fileName = "NewSkillInfo", menuName = "RDD/SkillInfo")]
