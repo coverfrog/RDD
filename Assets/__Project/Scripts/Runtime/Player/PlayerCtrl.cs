@@ -9,6 +9,8 @@ public class PlayerCtrl : NetworkBehaviour
 {
     public InputContext CurrentInputContext { get; set; }
 
+    public SkillContext CurrentSkillContext { get; set; } = new SkillContext();
+
     #region : Rigidbody
 
     public Rigidbody Rb3d
@@ -50,7 +52,8 @@ public class PlayerCtrl : NetworkBehaviour
             {
                 m_smGroup = new StateMachineGroup<PlayerCtrl>(this);
 
-                // Layer0: Idle <-> Move
+                #region : Layer0. Idle <-> Move
+
                 m_smGroup.AddState(0, "Idle", new PlayerIdleState());
                 m_smGroup.AddState(0, "Move", new PlayerMoveState());
 
@@ -64,6 +67,78 @@ public class PlayerCtrl : NetworkBehaviour
                     return Vector3.Distance(currentXZ, targetXZ) < 0.2f;
                 });
 
+                #endregion
+
+                #region : Layer1. Skill
+                // Layer1: Skill
+                m_smGroup.AddState(1, "None", new PlayerSkillNoneState());
+                m_smGroup.AddState(1, "Aim", new PlayerSkillAimState());
+                m_smGroup.AddState(1, "Cast", new PlayerSkillUseState());
+
+                // 대기 -> 조준
+                m_smGroup.AddTransition(1, "None", "Aim", () =>
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (CurrentInputContext.GetSlotClick(i))
+                        {
+                            SkillContext context = CurrentSkillContext;
+                            context.ActiveSkillSlot = i;
+                            context.ActiveCastingMode = context.GetSkillCastingMode(i);
+
+                            CurrentSkillContext = context;
+
+                            if (CurrentSkillContext.ActiveCastingMode != CastingMode.Quick) 
+                                return true;
+                        }
+                    }
+                    return false;
+                });
+
+                // 대기 -> 즉시 시전
+                m_smGroup.AddTransition(1, "None", "Cast", () =>
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (CurrentInputContext.GetSlotClick(i))
+                        {
+                            SkillContext context = CurrentSkillContext;
+                            context.ActiveSkillSlot = i;
+                            context.ActiveCastingMode = context.GetSkillCastingMode(i);
+
+                            CurrentSkillContext = context;
+
+                            if (context.ActiveCastingMode == CastingMode.Quick)
+                            {
+                                if (UtilWorld.TryGetMouseGroundPoint(out Vector3 point))
+                                {
+                                    context.SkillTargetPoint = point;
+                                }
+                                else
+                                {
+                                    context.SkillTargetPoint = transform.position;
+                                }
+
+                                CurrentSkillContext = context;
+
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                });
+
+                // 조준 -> 시전
+                m_smGroup.AddTransition(1, "Aim", "Cast", () => CurrentSkillContext.TriggerSkillCast);
+
+                // 조준 -> 취소
+                m_smGroup.AddTransition(1, "Aim", "None", () => CurrentSkillContext.CancelSkillCast);
+
+                // 시전 완료 ➔ 대기 복귀
+                m_smGroup.AddTransition(1, "Cast", "None", () => CurrentSkillContext.IsSkillCastingFinished);
+
+                #endregion
+
                 m_smGroup.Run();
             }
 
@@ -74,6 +149,11 @@ public class PlayerCtrl : NetworkBehaviour
     internal StateMachineGroup<PlayerCtrl> m_smGroup;
 
     #endregion
+
+    private void Awake()
+    {
+        _ = m_smGroup;
+    }
 
     private void Update()
     {
