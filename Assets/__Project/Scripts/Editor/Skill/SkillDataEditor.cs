@@ -7,14 +7,17 @@ using System.Linq;
 public class SkillDataEditor : Editor
 {
     private SerializedProperty m_idProp;
+    private SerializedProperty m_castingModeProp;
+    private SerializedProperty m_damageModeProp;
+
     private SerializedProperty m_levelDataListProp;
-    private SerializedProperty m_executeProp;
 
     private void OnEnable()
     {
         m_idProp = serializedObject.FindProperty("m_id");
+        m_castingModeProp = serializedObject.FindProperty("m_castingMode");
+        m_damageModeProp = serializedObject.FindProperty("m_damageMode");
         m_levelDataListProp = serializedObject.FindProperty("m_levelDataList");
-        m_executeProp = serializedObject.FindProperty("m_execute");
 
         // 활성화될 때 ID 자동 부여 및 Level 검증을 자동으로 수행합니다.
         ValidateAndFixData();
@@ -32,11 +35,9 @@ public class SkillDataEditor : Editor
         EditorGUILayout.PropertyField(m_idProp);
 
         // Casting Mode
-        SerializedProperty castingModeProp = serializedObject.FindProperty("m_castingMode");
-        if (castingModeProp != null)
-        {
-            EditorGUILayout.PropertyField(castingModeProp);
-        }
+        EditorGUILayout.PropertyField(m_castingModeProp);
+        EditorGUILayout.PropertyField(m_damageModeProp);
+
 
         // LevelDataList 그리기
         if (m_levelDataListProp != null)
