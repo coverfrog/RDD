@@ -66,6 +66,7 @@ public class PlayerCtrl : NetworkBehaviour
 
                 m_smGroup.AddState(0, "Idle", new PlayerIdleState());
                 m_smGroup.AddState(0, "Move", new PlayerMoveState());
+                m_smGroup.AddState(0, "Dash", new PlayerDashState());
 
                 m_smGroup.AddTransition(0, "Idle", "Move", () =>
                     CurrentInputContext.IsClickRight);
@@ -75,6 +76,16 @@ public class PlayerCtrl : NetworkBehaviour
                     Vector3 currentXZ = new Vector3(transform.position.x, 0, transform.position.z);
                     Vector3 targetXZ = new Vector3(CurrentInputContext.MoveGroundPoint.x, 0, CurrentInputContext.MoveGroundPoint.z);
                     return Vector3.Distance(currentXZ, targetXZ) < 0.2f;
+                });
+
+                m_smGroup.AddTransition(0, "Move", "Dash", () =>
+                {
+                    return CurrentSkillContext.IsDashing;
+                });
+
+                m_smGroup.AddTransition(0, "Dash", "Idle", () =>
+                {
+                    return true;
                 });
 
                 #endregion
