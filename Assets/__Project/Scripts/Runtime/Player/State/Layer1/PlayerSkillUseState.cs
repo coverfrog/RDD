@@ -8,6 +8,11 @@ public class PlayerSkillUseState : PlayerState
 
     public override void Enter()
     {
+        if (Owner.isLocalPlayer == false)
+        {
+            return;
+        }
+
         // : 내부 정보 갱신
 
         if (Owner.CurrentSkillContext.TryGetSlotSkillDuration(Owner, out float duration))
@@ -42,6 +47,12 @@ public class PlayerSkillUseState : PlayerState
 
     public override void FixedUpdate()
     {
+        if (Owner.Rb3d.isKinematic == true ||
+            Owner.isLocalPlayer == false)
+        {
+            return;
+        }
+
         if (Owner.CurrentSkillContext.IsDashing)
         {
             Vector3 currentVel = Owner.Rb3d.linearVelocity;
@@ -53,7 +64,9 @@ public class PlayerSkillUseState : PlayerState
 
     public override void Exit()
     {
-        if (Owner.CurrentSkillContext.IsDashing)
+        if (Owner.CurrentSkillContext.IsDashing &&
+            Owner.Rb3d.isKinematic == false &&
+            Owner.isLocalPlayer == true)
         {
             Vector3 currentVel = Owner.Rb3d.linearVelocity;
             Owner.Rb3d.linearVelocity = new Vector3(0, currentVel.y, 0);
