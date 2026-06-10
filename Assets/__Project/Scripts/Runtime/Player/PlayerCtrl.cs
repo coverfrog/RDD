@@ -8,7 +8,10 @@ using UnityEngine;
 public class PlayerCtrl : NetworkBehaviour
 {
     public InputContext CurrentInputContext;
+    [SyncVar]
     public SkillContext CurrentSkillContext;
+
+    public bool IsDashing => CurrentSkillContext.IsDashing;
 
     #region : Rigidbody
 
@@ -63,7 +66,13 @@ public class PlayerCtrl : NetworkBehaviour
                 {
                     Vector3 currentXZ = new Vector3(transform.position.x, 0, transform.position.z);
                     Vector3 targetXZ = new Vector3(CurrentInputContext.MoveGroundPoint.x, 0, CurrentInputContext.MoveGroundPoint.z);
-                    return Vector3.Distance(currentXZ, targetXZ) < 0.2f;
+                    if (Vector3.Distance(currentXZ, targetXZ) < 0.2f)
+                        return true;
+
+                    if (IsDashing)
+                        return true;
+
+                    return false;
                 });
 
                 #endregion
@@ -204,6 +213,28 @@ public class PlayerCtrl : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        if (isServer && CurrentSkillContext.IsDashing)
+        {
+            if (Time.time >= CurrentSkillContext.DashEndTime)
+            {
+                SkillContext context = CurrentSkillContext;
+                context.IsDashing = false;
+                CurrentSkillContext = context;
+
+                Vector3 vel = Rb3d.linearVelocity;
+                Rb3d.linearVelocity = new Vector3(0, vel.y, 0);
+            }
+            else
+            {
+                Vector3 vel = Rb3d.linearVelocity;
+                Rb3d.linearVelocity = new Vector3(CurrentSkillContext.DashDirection.x * CurrentSkillContext.DashSpeed, vel.y, CurrentSkillContext.DashDirection.z * CurrentSkillContext.DashSpeed);
+                if (CurrentSkillContext.DashDirection.sqrMagnitude > 0.001f)
+                {
+                    transform.rotation = Quaternion.LookRotation(CurrentSkillContext.DashDirection);
+                }
+            }
+        }
+
         SmGroup.FixedUpdate();
     }
 
@@ -249,11 +280,33 @@ public class PlayerCtrl : NetworkBehaviour
         }
 
         ProjectileCtrl prefab = skillEffect.ProjectilePrefab;
-        float speed = skillEffect.ProjectileSpeed;
+        float speed = levelData.Speed;
 
         ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
         instance.Setup(this, speed);
         NetworkServer.Spawn(instance.gameObject, connectionToClient);
+    }
+
+    [Command]
+    public void CmdStartDash(Vector3 direction, float speed, float duration)
+    {
+        SkillContext context = CurrentSkillContext;
+        context.IsDashing = true;
+        context.DashDirection = direction.normalized;
+        context.DashSpeed = speed;
+        context.DashEndTime = Time.time + duration;
+        CurrentSkillContext = context;
+    }
+
+    [Command]
+    public void CmdStopDash()
+    {
+        SkillContext context = CurrentSkillContext;
+        context.IsDashing = false;
+        CurrentSkillContext = context;
+
+        Vector3 vel = Rb3d.linearVelocity;
+        Rb3d.linearVelocity = new Vector3(0, vel.y, 0);
     }
 
     #endregion

@@ -27,7 +27,17 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        SkillInfos = Resources.LoadAll<SkillData>("Skills/Skill").ToDictionary(x => x.ID, x => x);
+        SkillInfos = new Dictionary<ulong, SkillData>();
+        SkillData[] loadedSkills = Resources.LoadAll<SkillData>("Skills/Skill");
+        foreach (SkillData skill in loadedSkills)
+        {
+            if (SkillInfos.ContainsKey(skill.ID))
+            {
+                Debug.LogError($"[DataManager] Duplicate Skill ID detected: {skill.ID} on asset '{skill.name}' (already registered by '{SkillInfos[skill.ID].name}'). Skipping.");
+                continue;
+            }
+            SkillInfos.Add(skill.ID, skill);
+        }
 
         IsLoaded = true;
     }

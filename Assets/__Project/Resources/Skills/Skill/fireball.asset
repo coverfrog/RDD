@@ -14,12 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_id: 2
   m_castingMode: 0
+  m_damageMode: 1
   m_levelDataList:
   - Level: 1
-    Damage: 1
+    Value: 1
+    Speed: 15
     Duration: 1
-    m_skillEffect: {fileID: 11400000, guid: ef8d5accb18519f468e039173244d79b, type: 2}
-  - Level: 2
-    Damage: 3
-    Duration: 1
-    m_skillEffect: {fileID: 11400000, guid: ef8d5accb18519f468e039173244d79b, type: 2}
+    m_skillEffect:
+      rid: 2642043107393142854
+  references:
+    version: 2
+    RefIds:
+    - rid: 2642043107393142854
+      type: {class: ProjectileSkillEffect, ns: , asm: Assembly-CSharp}
+      data:
+        m_projectilePrefab: {fileID: 8005969605012067915, guid: fcbee1a1a4e200e4b834f93092b9a4b6, type: 3}

@@ -7,6 +7,9 @@ public class PlayerMoveState : PlayerState
         if (Owner.Rb3d.isKinematic == true)
             return;
 
+        if (Owner.IsDashing)
+            return;
+
         Vector3 direction = GetDirection();
 
         if (direction.sqrMagnitude <= 0.001f)

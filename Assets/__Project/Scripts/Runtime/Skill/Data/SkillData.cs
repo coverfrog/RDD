@@ -7,10 +7,12 @@ public class SkillLevelData
 {
     [ReadOnly]
     public int Level;
-    public float Damage;
+    public float Value;
+    public float Speed;
     public float Duration;
 
-    [SerializeField] private SkillEffect m_skillEffect;
+    [SerializeReference, SubclassSelector]
+    private SkillEffect m_skillEffect;
     public SkillEffect SkillEffect => m_skillEffect;
 }
 

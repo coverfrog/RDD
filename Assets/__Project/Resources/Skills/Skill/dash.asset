@@ -14,12 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_id: 1
   m_castingMode: 0
+  m_damageMode: 1
   m_levelDataList:
   - Level: 1
-    Damage: 0
+    Value: 1
+    Speed: 10
     Duration: 0.1
-    m_skillEffect: {fileID: 0}
-  - Level: 2
-    Damage: 0
-    Duration: 0.1
-    m_skillEffect: {fileID: 0}
+    m_skillEffect:
+      rid: 2642043107393142852
+  references:
+    version: 2
+    RefIds:
+    - rid: 2642043107393142852
+      type: {class: DashSkillEffect, ns: , asm: Assembly-CSharp}
+      data: 

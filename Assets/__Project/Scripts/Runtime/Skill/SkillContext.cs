@@ -36,6 +36,26 @@ public struct SkillContext
     public bool IsSkillCastingFinished;
 
     /// <summary>
+    /// 대쉬 여부
+    /// </summary>
+    public bool IsDashing;
+
+    /// <summary>
+    /// 대쉬 방향
+    /// </summary>
+    public Vector3 DashDirection;
+
+    /// <summary>
+    /// 대쉬 속도
+    /// </summary>
+    public float DashSpeed;
+
+    /// <summary>
+    /// 대쉬 종료 시간
+    /// </summary>
+    public float DashEndTime;
+
+    /// <summary>
     /// 런타임
     /// </summary>
     public SkillRuntimeData[] RuntimeDataArr;
