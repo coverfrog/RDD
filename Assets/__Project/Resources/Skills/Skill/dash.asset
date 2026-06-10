@@ -14,12 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_id: 1
   m_castingMode: 0
+  m_execute:
+    rid: -2
   m_levelDataList:
   - Level: 1
     Damage: 0
     Duration: 0.1
-    m_skillEffect: {fileID: 11400000, guid: 3c9c318585db36041b4ec9c5f2e32a99, type: 2}
+    m_skillEffect: {fileID: 0}
   - Level: 2
     Damage: 0
     Duration: 0.1
-    m_skillEffect: {fileID: 11400000, guid: 3c9c318585db36041b4ec9c5f2e32a99, type: 2}
+    m_skillEffect: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
