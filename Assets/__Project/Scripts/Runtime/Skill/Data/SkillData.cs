@@ -20,14 +20,11 @@ public class SkillData : ScriptableObject
     [ReadOnly]
     [SerializeField] private ulong m_id;
     [SerializeField] private CastingMode m_castingMode;
-    [SerializeReference, SubclassSelector] private SkillExecute m_execute;
     [SerializeField] private List<SkillLevelData> m_levelDataList = new List<SkillLevelData>();
 
     public ulong ID => m_id;
 
     public CastingMode CastingMode => m_castingMode;
-
-    public SkillExecute Execute => m_execute;
 
     public List<SkillLevelData> LevelDataList => m_levelDataList;
 

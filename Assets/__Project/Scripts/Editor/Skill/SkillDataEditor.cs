@@ -31,22 +31,12 @@ public class SkillDataEditor : Editor
         // 에셋의 ID를 표시 (ReadOnly이므로 비활성화된 것처럼 표시하거나 기본 Draw)
         EditorGUILayout.PropertyField(m_idProp);
 
-        EditorGUILayout.Space();
-
         // Casting Mode
         SerializedProperty castingModeProp = serializedObject.FindProperty("m_castingMode");
         if (castingModeProp != null)
         {
             EditorGUILayout.PropertyField(castingModeProp);
         }
-
-        // Execute (Subclass Selector)
-        if (m_executeProp != null)
-        {
-            EditorGUILayout.PropertyField(m_executeProp, true);
-        }
-
-        EditorGUILayout.Space();
 
         // LevelDataList 그리기
         if (m_levelDataListProp != null)
@@ -92,7 +82,6 @@ public class SkillDataEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
         // 수동 검증 및 ID 할당 버튼 제공
-        EditorGUILayout.Space();
         if (GUILayout.Button("Verify and Assign ID"))
         {
             ValidateAndFixData(true);
