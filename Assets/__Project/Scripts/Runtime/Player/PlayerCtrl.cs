@@ -271,46 +271,105 @@ public class PlayerCtrl : NetworkBehaviour
 
     #endregion
 
-    #region : Cmd (State 내부에선 직접 Cmd 호출이 불가)
+    #region : Skill Helper Methods (Server Only)
+
+    /// <summary>
+    /// 서버 권한으로 데이터 매니저 상태, 스킬 데이터 존재 여부, 쿨다운 상태를 종합 검증합니다.
+    /// </summary>
+    private bool ValidateAndCheckCooldown(int slot, ulong skillId, int level, out SkillLevelData levelData)
+    {
+        levelData = null;
+
+        // 1. 데이터 매니저 로딩 확인
+        if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
+        {
+            Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
+            return false;
+        }
+
+        // 2. 슬롯 범위 확인
+        if (slot < 0 || slot >= CurrentSkillContext.RuntimeDataArr.Length)
+        {
+            Debug.LogError($"[PlayerCtrl] Invalid slot index: {slot}");
+            return false;
+        }
+
+        // 3. 스킬 기본 데이터 확인
+        if (!DataManager.Instance.SkillInfos.TryGetValue(skillId, out SkillData skillData))
+        {
+            Debug.LogError($"[PlayerCtrl] SkillData not found for ID: {skillId}");
+            return false;
+        }
+
+        // 4. 레벨별 데이터 및 이펙트 확인
+        levelData = skillData.GetLevelData(level);
+        if (levelData == null)
+        {
+            Debug.LogError($"[PlayerCtrl] SkillLevelData not found for ID: {skillId}, Level: {level}");
+            return false;
+        }
+
+        // 5. 서버 authoritative 쿨다운 검사 (0.1초 보정치 포함)
+        if (NetworkTime.time + 0.1 < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime)
+        {
+            Debug.LogWarning($"[PlayerCtrl] Command rejected: Skill ID {skillId} is on cooldown on server. CurrentTime={NetworkTime.time}, CooldownEndTime={CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime}");
+
+            // 거부되었으므로 클라이언트 상태를 강제로 풀어줌
+            ForceUnlockClient();
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 쿨다운 거부 또는 스킬 예외 발생 시 클라이언트의 Cast 상태를 강제 해제합니다.
+    /// </summary>
+    private void ForceUnlockClient()
+    {
+        SkillContext rejectContext = CurrentSkillContext;
+        rejectContext.IsSkillCastingFinished = true;
+        rejectContext.ActiveSkillSlot = -1;
+        CurrentSkillContext = rejectContext;
+    }
+
+    /// <summary>
+    /// 스킬 시전 시작에 따른 구조체 데이터를 깊은 복사하여 갱신하고 쿨다운을 적용합니다.
+    /// </summary>
+    private void InitializeServerSkillCast(int slot, float cooldown, float duration)
+    {
+        SkillContext context = CurrentSkillContext;
+
+        // 구조체 내부 배열의 참조 전염을 막기 위한 Clone
+        context.RuntimeDataArr = (SkillRuntimeData[])context.RuntimeDataArr.Clone();
+        context.RuntimeDataArr[slot].CooldownEndTime = NetworkTime.time + cooldown;
+
+        // 시전 상태 초기화 및 지속시간 설정
+        context.ActiveSkillSlot = slot;
+        context.IsSkillCastingFinished = false;
+        context.UseStartTime = NetworkTime.time;
+        context.UseDuration = duration;
+
+        CurrentSkillContext = context;
+    }
+
+    #endregion
+
+    #region : Skill Methods (Server Only)
 
     [Command]
     public void CmdSpawnProjectile(int slot, ulong skillId, int level, Vector3 spawnPosition, Quaternion spawnRotation)
     {
         Debug.Log($"[Server] CmdSpawnProjectile called: slot={slot}, skillId={skillId}, level={level}");
 
-        if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
-        {
-            Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
+        // 공통 검증 및 쿨다운 체크
+        if (!ValidateAndCheckCooldown(slot, skillId, level, out SkillLevelData levelData))
             return;
-        }
 
-        if (!DataManager.Instance.SkillInfos.TryGetValue(skillId, out SkillData skillData))
-        {
-            Debug.LogError($"[PlayerCtrl] SkillData not found for ID: {skillId}");
-            return;
-        }
-
-        SkillLevelData levelData = skillData.GetLevelData(level);
-        if (levelData == null || levelData.SkillEffect == null)
+        if (levelData.SkillEffect == null)
         {
             Debug.LogError($"[PlayerCtrl] SkillEffect not found for Skill ID: {skillId}, Level: {level}");
             return;
-        }
-
-        // Server-side authoritative cooldown check with tolerance
-        if (slot >= 0 && slot < CurrentSkillContext.RuntimeDataArr.Length)
-        {
-            if (NetworkTime.time + 0.1 < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime)
-            {
-                Debug.LogWarning($"[PlayerCtrl] CmdSpawnProjectile rejected: Skill ID {skillId} is on cooldown on server. CurrentTime={NetworkTime.time}, CooldownEndTime={CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime}");
-                
-                // Force unlock client
-                SkillContext rejectContext = CurrentSkillContext;
-                rejectContext.IsSkillCastingFinished = true;
-                rejectContext.ActiveSkillSlot = -1;
-                CurrentSkillContext = rejectContext;
-                return;
-            }
         }
 
         SkillEffect skillEffect = levelData.SkillEffect;
@@ -320,22 +379,11 @@ public class PlayerCtrl : NetworkBehaviour
             return;
         }
 
-        // Update cooldown & initialize casting state on server
-        if (slot >= 0 && slot < CurrentSkillContext.RuntimeDataArr.Length)
-        {
-            SkillContext context = CurrentSkillContext;
-            context.RuntimeDataArr = (SkillRuntimeData[])context.RuntimeDataArr.Clone();
-            context.RuntimeDataArr[slot].CooldownEndTime = NetworkTime.time + levelData.Cooldown;
-            
-            context.ActiveSkillSlot = slot;
-            context.IsSkillCastingFinished = false;
-            context.UseStartTime = NetworkTime.time;
-            context.UseDuration = levelData.Duration;
-            
-            CurrentSkillContext = context;
-            Debug.Log($"[Server] Cooldown updated for slot {slot}: CooldownEndTime={context.RuntimeDataArr[slot].CooldownEndTime}");
-        }
+        // 공통 상태 변경 및 쿨다운 적용
+        InitializeServerSkillCast(slot, levelData.Cooldown, levelData.Duration);
+        Debug.Log($"[Server] Cooldown updated for slot {slot}: CooldownEndTime={CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime}");
 
+        // 발사체 생성
         ProjectileCtrl prefab = skillEffect.ProjectilePrefab;
         float speed = levelData.Speed;
 
@@ -349,60 +397,25 @@ public class PlayerCtrl : NetworkBehaviour
     [Command]
     public void CmdStartDash(int slot, Vector3 direction, float speed, float duration)
     {
-        if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
-        {
-            Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
-            return;
-        }
+        // Dash 스킬 역시 ID를 역추적하기 위해 현재 슬롯 정보 활용
+        if (slot < 0 || slot >= CurrentSkillContext.RuntimeDataArr.Length) return;
+        ulong skillId = (ulong)CurrentSkillContext.RuntimeDataArr[slot].ID;
+        int level = CurrentSkillContext.RuntimeDataArr[slot].Level;
 
-        if (slot < 0 || slot >= CurrentSkillContext.RuntimeDataArr.Length)
-        {
-            Debug.LogError($"[PlayerCtrl] Invalid slot index: {slot} in CmdStartDash");
+        // 공통 검증 및 쿨다운 체크
+        if (!ValidateAndCheckCooldown(slot, skillId, level, out SkillLevelData levelData))
             return;
-        }
 
-        SkillRuntimeData runtimeInfo = CurrentSkillContext.RuntimeDataArr[slot];
-        if (!DataManager.Instance.SkillInfos.TryGetValue(runtimeInfo.ID, out SkillData skillData))
-        {
-            Debug.LogError($"[PlayerCtrl] SkillData not found for slot {slot} ID: {runtimeInfo.ID}");
-            return;
-        }
-
-        SkillLevelData levelData = skillData.GetLevelData(runtimeInfo.Level);
-        if (levelData == null)
-        {
-            Debug.LogError($"[PlayerCtrl] SkillLevelData not found for slot {slot} ID: {runtimeInfo.ID}, Level: {runtimeInfo.Level}");
-            return;
-        }
-
-        // Server-side authoritative cooldown check with tolerance
-        if (NetworkTime.time + 0.1 < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime)
-        {
-            Debug.LogWarning($"[PlayerCtrl] CmdStartDash rejected: Skill slot {slot} is on cooldown on server.");
-            
-            // Force unlock client
-            SkillContext rejectContext = CurrentSkillContext;
-            rejectContext.IsSkillCastingFinished = true;
-            rejectContext.ActiveSkillSlot = -1;
-            CurrentSkillContext = rejectContext;
-            return;
-        }
-
+        // 대시 고유 데이터 셋업
         SkillContext context = CurrentSkillContext;
         context.IsDashing = true;
         context.DashDirection = direction.normalized;
         context.DashSpeed = speed;
         context.DashEndTime = Time.time + duration;
-        
-        context.RuntimeDataArr = (SkillRuntimeData[])context.RuntimeDataArr.Clone();
-        context.RuntimeDataArr[slot].CooldownEndTime = NetworkTime.time + levelData.Cooldown;
-        
-        context.ActiveSkillSlot = slot;
-        context.IsSkillCastingFinished = false;
-        context.UseStartTime = NetworkTime.time;
-        context.UseDuration = duration;
-        
         CurrentSkillContext = context;
+
+        // 공통 상태 변경 및 쿨다운 적용 (대시는 인자로 받은 duration 사용)
+        InitializeServerSkillCast(slot, levelData.Cooldown, duration);
     }
 
     [Command]
