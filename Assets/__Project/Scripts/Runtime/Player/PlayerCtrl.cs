@@ -13,6 +13,14 @@ public class PlayerCtrl : NetworkBehaviour
 
     public bool IsDashing => CurrentSkillContext.IsDashing;
 
+    public bool IsSkillOnCooldown(int slot)
+    {
+        if (CurrentSkillContext.RuntimeDataArr == null || slot < 0 || slot >= CurrentSkillContext.RuntimeDataArr.Length)
+            return false;
+
+        return NetworkTime.time < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime;
+    }
+
     #region : Rigidbody
 
     public Rigidbody Rb3d
@@ -66,13 +74,7 @@ public class PlayerCtrl : NetworkBehaviour
                 {
                     Vector3 currentXZ = new Vector3(transform.position.x, 0, transform.position.z);
                     Vector3 targetXZ = new Vector3(CurrentInputContext.MoveGroundPoint.x, 0, CurrentInputContext.MoveGroundPoint.z);
-                    if (Vector3.Distance(currentXZ, targetXZ) < 0.2f)
-                        return true;
-
-                    if (IsDashing)
-                        return true;
-
-                    return false;
+                    return Vector3.Distance(currentXZ, targetXZ) < 0.2f;
                 });
 
                 #endregion
@@ -93,6 +95,9 @@ public class PlayerCtrl : NetworkBehaviour
                     {
                         if (CurrentInputContext.GetSlotClick(i))
                         {
+                            if (IsSkillOnCooldown(i))
+                                continue;
+
                             SkillContext context = CurrentSkillContext;
                             context.ActiveSkillSlot = i;
                             if (context.TryGetSkillCastingMode(this, out CastingMode castingMode))
@@ -119,6 +124,9 @@ public class PlayerCtrl : NetworkBehaviour
                     {
                         if (CurrentInputContext.GetSlotClick(i))
                         {
+                            if (IsSkillOnCooldown(i))
+                                continue;
+
                             SkillContext context = CurrentSkillContext;
                             context.ActiveSkillSlot = i;
                             if (context.TryGetSkillCastingMode(this, out CastingMode castingMode))
@@ -208,6 +216,21 @@ public class PlayerCtrl : NetworkBehaviour
 
     private void Update()
     {
+        if (isServer)
+        {
+            if (CurrentSkillContext.ActiveSkillSlot != -1 && CurrentSkillContext.IsSkillCastingFinished == false)
+            {
+                if (NetworkTime.time >= CurrentSkillContext.UseStartTime + CurrentSkillContext.UseDuration)
+                {
+                    SkillContext context = CurrentSkillContext;
+                    context.IsSkillCastingFinished = true;
+                    context.ActiveSkillSlot = -1;
+                    CurrentSkillContext = context;
+                    Debug.Log($"[Server] Casting finished. Reset active slot to -1.");
+                }
+            }
+        }
+
         SmGroup.Update();
     }
 
@@ -251,8 +274,10 @@ public class PlayerCtrl : NetworkBehaviour
     #region : Cmd (State 내부에선 직접 Cmd 호출이 불가)
 
     [Command]
-    public void CmdSpawnProjectile(ulong skillId, int level, Vector3 spawnPosition, Quaternion spawnRotation)
+    public void CmdSpawnProjectile(int slot, ulong skillId, int level, Vector3 spawnPosition, Quaternion spawnRotation)
     {
+        Debug.Log($"[Server] CmdSpawnProjectile called: slot={slot}, skillId={skillId}, level={level}");
+
         if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
         {
             Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
@@ -272,6 +297,22 @@ public class PlayerCtrl : NetworkBehaviour
             return;
         }
 
+        // Server-side authoritative cooldown check with tolerance
+        if (slot >= 0 && slot < CurrentSkillContext.RuntimeDataArr.Length)
+        {
+            if (NetworkTime.time + 0.1 < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime)
+            {
+                Debug.LogWarning($"[PlayerCtrl] CmdSpawnProjectile rejected: Skill ID {skillId} is on cooldown on server. CurrentTime={NetworkTime.time}, CooldownEndTime={CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime}");
+                
+                // Force unlock client
+                SkillContext rejectContext = CurrentSkillContext;
+                rejectContext.IsSkillCastingFinished = true;
+                rejectContext.ActiveSkillSlot = -1;
+                CurrentSkillContext = rejectContext;
+                return;
+            }
+        }
+
         SkillEffect skillEffect = levelData.SkillEffect;
         if (!skillEffect.IsProjectile || skillEffect.ProjectilePrefab == null)
         {
@@ -279,22 +320,88 @@ public class PlayerCtrl : NetworkBehaviour
             return;
         }
 
+        // Update cooldown & initialize casting state on server
+        if (slot >= 0 && slot < CurrentSkillContext.RuntimeDataArr.Length)
+        {
+            SkillContext context = CurrentSkillContext;
+            context.RuntimeDataArr = (SkillRuntimeData[])context.RuntimeDataArr.Clone();
+            context.RuntimeDataArr[slot].CooldownEndTime = NetworkTime.time + levelData.Cooldown;
+            
+            context.ActiveSkillSlot = slot;
+            context.IsSkillCastingFinished = false;
+            context.UseStartTime = NetworkTime.time;
+            context.UseDuration = levelData.Duration;
+            
+            CurrentSkillContext = context;
+            Debug.Log($"[Server] Cooldown updated for slot {slot}: CooldownEndTime={context.RuntimeDataArr[slot].CooldownEndTime}");
+        }
+
         ProjectileCtrl prefab = skillEffect.ProjectilePrefab;
         float speed = levelData.Speed;
 
+        Debug.Log($"[Server] Instantiating projectile prefab: {prefab.name} at {spawnPosition} with speed {speed}");
         ProjectileCtrl instance = Instantiate(prefab, spawnPosition, spawnRotation);
         instance.Setup(this, speed);
         NetworkServer.Spawn(instance.gameObject, connectionToClient);
+        Debug.Log("[Server] Projectile successfully spawned via NetworkServer.");
     }
 
     [Command]
-    public void CmdStartDash(Vector3 direction, float speed, float duration)
+    public void CmdStartDash(int slot, Vector3 direction, float speed, float duration)
     {
+        if (DataManager.Instance == null || !DataManager.Instance.IsLoaded)
+        {
+            Debug.LogError("[PlayerCtrl] DataManager is not initialized yet!");
+            return;
+        }
+
+        if (slot < 0 || slot >= CurrentSkillContext.RuntimeDataArr.Length)
+        {
+            Debug.LogError($"[PlayerCtrl] Invalid slot index: {slot} in CmdStartDash");
+            return;
+        }
+
+        SkillRuntimeData runtimeInfo = CurrentSkillContext.RuntimeDataArr[slot];
+        if (!DataManager.Instance.SkillInfos.TryGetValue(runtimeInfo.ID, out SkillData skillData))
+        {
+            Debug.LogError($"[PlayerCtrl] SkillData not found for slot {slot} ID: {runtimeInfo.ID}");
+            return;
+        }
+
+        SkillLevelData levelData = skillData.GetLevelData(runtimeInfo.Level);
+        if (levelData == null)
+        {
+            Debug.LogError($"[PlayerCtrl] SkillLevelData not found for slot {slot} ID: {runtimeInfo.ID}, Level: {runtimeInfo.Level}");
+            return;
+        }
+
+        // Server-side authoritative cooldown check with tolerance
+        if (NetworkTime.time + 0.1 < CurrentSkillContext.RuntimeDataArr[slot].CooldownEndTime)
+        {
+            Debug.LogWarning($"[PlayerCtrl] CmdStartDash rejected: Skill slot {slot} is on cooldown on server.");
+            
+            // Force unlock client
+            SkillContext rejectContext = CurrentSkillContext;
+            rejectContext.IsSkillCastingFinished = true;
+            rejectContext.ActiveSkillSlot = -1;
+            CurrentSkillContext = rejectContext;
+            return;
+        }
+
         SkillContext context = CurrentSkillContext;
         context.IsDashing = true;
         context.DashDirection = direction.normalized;
         context.DashSpeed = speed;
         context.DashEndTime = Time.time + duration;
+        
+        context.RuntimeDataArr = (SkillRuntimeData[])context.RuntimeDataArr.Clone();
+        context.RuntimeDataArr[slot].CooldownEndTime = NetworkTime.time + levelData.Cooldown;
+        
+        context.ActiveSkillSlot = slot;
+        context.IsSkillCastingFinished = false;
+        context.UseStartTime = NetworkTime.time;
+        context.UseDuration = duration;
+        
         CurrentSkillContext = context;
     }
 

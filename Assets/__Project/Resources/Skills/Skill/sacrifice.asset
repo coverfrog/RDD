@@ -20,10 +20,13 @@ MonoBehaviour:
     Value: 1
     Speed: 1
     Duration: 1
+    Cooldown: 0
     m_skillEffect:
-      rid: -2
+      rid: 2642043107393142857
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 2642043107393142857
+      type: {class: SurroundingSkillEffect, ns: , asm: Assembly-CSharp}
+      data:
+        m_surroundingEffectPrefab: {fileID: 0}

@@ -19,7 +19,8 @@ MonoBehaviour:
   - Level: 1
     Value: 1
     Speed: 15
-    Duration: 1
+    Duration: 0
+    Cooldown: 0
     m_skillEffect:
       rid: 2642043107393142854
   references:

@@ -1,31 +1,22 @@
+using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSkillUseState : PlayerState
 {
-    private float m_duration;
-    private float m_startTime;
-
     public override void Enter()
     {
-        if (Owner.isLocalPlayer == false)
-        {
-            return;
-        }
-
-        // : 내부 정보 갱신
-
-        if (Owner.CurrentSkillContext.TryGetSlotSkillDuration(Owner, out float duration))
-        {
-            m_duration = duration;
-        }
-        m_startTime = Time.time;
-
         // : Context 갱신
 
         SkillContext context = Owner.CurrentSkillContext;
         context.IsSkillCastingFinished = false;
         context.IsDashing = false;
+        context.UseStartTime = NetworkTime.time;
+
+        if (Owner.CurrentSkillContext.TryGetSlotSkillDuration(Owner, out float duration))
+        {
+            context.UseDuration = duration;
+        }
 
         Owner.CurrentSkillContext = context;
 
@@ -36,7 +27,12 @@ public class PlayerSkillUseState : PlayerState
 
     public override void Update()
     {
-        if (Time.time - m_startTime >= m_duration)
+        if (Owner.isServer == false)
+        {
+            return;
+        }
+
+        if (NetworkTime.time - Owner.CurrentSkillContext.UseStartTime >= Owner.CurrentSkillContext.UseDuration)
         {
             SkillContext context = Owner.CurrentSkillContext;
             context.IsSkillCastingFinished = true;
@@ -47,13 +43,9 @@ public class PlayerSkillUseState : PlayerState
 
     public override void FixedUpdate()
     {
-        if (Owner.Rb3d.isKinematic == true ||
-            Owner.isLocalPlayer == false)
-        {
-            return;
-        }
-
-        if (Owner.CurrentSkillContext.IsDashing)
+        if (Owner.CurrentSkillContext.IsDashing == true &&
+            Owner.isLocalPlayer == true &&
+            Owner.Rb3d.isKinematic == false)
         {
             Vector3 currentVel = Owner.Rb3d.linearVelocity;
             Vector3 dir = Owner.CurrentSkillContext.DashDirection;
@@ -64,17 +56,19 @@ public class PlayerSkillUseState : PlayerState
 
     public override void Exit()
     {
-        if (Owner.CurrentSkillContext.IsDashing &&
-            Owner.Rb3d.isKinematic == false &&
-            Owner.isLocalPlayer == true)
+        if (Owner.isLocalPlayer == true)
         {
-            Vector3 currentVel = Owner.Rb3d.linearVelocity;
-            Owner.Rb3d.linearVelocity = new Vector3(0, currentVel.y, 0);
-
+            if (Owner.Rb3d.isKinematic == false &&
+                Owner.CurrentSkillContext.IsDashing == true)
+            {
+                Vector3 currentVel = Owner.Rb3d.linearVelocity;
+                Owner.Rb3d.linearVelocity = new Vector3(0, currentVel.y, 0);
+            }
+            
             SkillContext context = Owner.CurrentSkillContext;
             context.IsDashing = false;
-            Owner.CurrentSkillContext = context;
 
+            Owner.CurrentSkillContext = context;
             Owner.CmdStopDash();
         }
     }
@@ -108,6 +102,7 @@ public class PlayerSkillUseState : PlayerState
                     Quaternion.LookRotation(direction.normalized);
 
                 Owner.CmdSpawnProjectile(
+                    Owner.CurrentSkillContext.ActiveSkillSlot,
                     skillData.ID,
                     levelData.Level,
                     Owner.transform.position,
@@ -135,7 +130,7 @@ public class PlayerSkillUseState : PlayerState
                 Owner.transform.rotation = Quaternion.LookRotation(context.DashDirection);
 
                 // Start dash on the server
-                Owner.CmdStartDash(context.DashDirection, context.DashSpeed, m_duration);
+                Owner.CmdStartDash(context.ActiveSkillSlot, context.DashDirection, context.DashSpeed, context.UseDuration);
             }
 
             if (skillEffect.IsSurroundingEffect)

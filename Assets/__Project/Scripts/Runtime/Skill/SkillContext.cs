@@ -5,6 +5,8 @@ using UnityEngine;
 [Serializable]
 public struct SkillContext 
 {
+    [Header("Condition")]
+
     /// <summary>
     /// 활성화할 스킬 슬롯
     /// </summary>
@@ -35,6 +37,20 @@ public struct SkillContext
     /// </summary>
     public bool IsSkillCastingFinished;
 
+    [Header("Base")]
+
+    /// <summary>
+    /// 스킬 지속 시간
+    /// </summary>
+    public float UseDuration;
+
+    /// <summary>
+    /// 스킬 시작 시간
+    /// </summary>
+    public double UseStartTime;
+
+    [Header("Dash")]
+
     /// <summary>
     /// 대쉬 여부
     /// </summary>
@@ -54,6 +70,8 @@ public struct SkillContext
     /// 대쉬 종료 시간
     /// </summary>
     public float DashEndTime;
+
+    [Header("Runtime")]
 
     /// <summary>
     /// 런타임

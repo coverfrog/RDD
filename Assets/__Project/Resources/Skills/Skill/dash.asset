@@ -17,9 +17,10 @@ MonoBehaviour:
   m_damageMode: 1
   m_levelDataList:
   - Level: 1
-    Value: 1
-    Speed: 10
+    Value: 0
+    Speed: 40
     Duration: 0.1
+    Cooldown: 0
     m_skillEffect:
       rid: 2642043107393142852
   references:

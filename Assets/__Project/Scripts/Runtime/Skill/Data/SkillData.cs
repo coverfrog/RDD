@@ -10,6 +10,7 @@ public class SkillLevelData
     public float Value;
     public float Speed;
     public float Duration;
+    public float Cooldown;
 
     [SerializeReference, SubclassSelector]
     private SkillEffect m_skillEffect;
