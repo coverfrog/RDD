@@ -38,7 +38,7 @@ public struct SkillContext
     /// <summary>
     /// 런타임
     /// </summary>
-    public SkillRuntimeData[] RuntimeInfos;
+    public SkillRuntimeData[] RuntimeDataArr;
 
     public bool TryGetSkillCastingMode(PlayerCtrl owner, out CastingMode castingMode)
     {
@@ -70,7 +70,7 @@ public struct SkillContext
     {
         int slot = ActiveSkillSlot;
 
-        SkillRuntimeData[] runtimeDataArr = owner.CurrentSkillContext.RuntimeInfos;
+        SkillRuntimeData[] runtimeDataArr = owner.CurrentSkillContext.RuntimeDataArr;
         if (runtimeDataArr.Length == 0 || slot > runtimeDataArr.Length - 1)
         {
             Debug.LogError($"Error");

@@ -171,7 +171,7 @@ public class PlayerCtrl : NetworkBehaviour
 
         CurrentSkillContext = new SkillContext()
         {
-            RuntimeInfos = new SkillRuntimeData[4]
+            RuntimeDataArr = new SkillRuntimeData[4]
         {
             new SkillRuntimeData()
             {
