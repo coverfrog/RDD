@@ -74,12 +74,12 @@ public class PlayerSkillUseState : PlayerState
                     rotation);
             }
 
-            if (skillEffect.HasSurroundingEffect)
+            if (skillEffect.IsSurroundingEffect)
             {
 
             }
 
-            if (skillEffect.HasHitEffect)
+            if (skillEffect.IsHitEffect)
             {
 
             }

@@ -20,10 +20,10 @@ public class SkillEffectEditor : Editor
         m_projectilePrefabProp = serializedObject.FindProperty("m_projectilePrefab");
         m_projectileSpeedProp = serializedObject.FindProperty("m_projectileSpeed");
 
-        m_hasSurroundingEffectProp = serializedObject.FindProperty("m_hasSurroundingEffect");
+        m_hasSurroundingEffectProp = serializedObject.FindProperty("m_isSurroundingEffect");
         m_surroundingEffectPrefabProp = serializedObject.FindProperty("m_surroundingEffectPrefab");
 
-        m_hasHitEffectProp = serializedObject.FindProperty("m_hasHitEffect");
+        m_hasHitEffectProp = serializedObject.FindProperty("m_isHitEffect");
         m_hitEffectPrefabProp = serializedObject.FindProperty("m_hitEffectPrefab");
     }
 
@@ -52,7 +52,7 @@ public class SkillEffectEditor : Editor
         EditorGUILayout.Space();
 
         // 2. Surrounding Settings
-        EditorGUILayout.PropertyField(m_hasSurroundingEffectProp, new GUIContent("Has Surrounding Effect"));
+        EditorGUILayout.PropertyField(m_hasSurroundingEffectProp, new GUIContent("Is Surrounding Effect"));
         if (m_hasSurroundingEffectProp.boolValue)
         {
             EditorGUI.indentLevel++;
@@ -63,7 +63,7 @@ public class SkillEffectEditor : Editor
         EditorGUILayout.Space();
 
         // 3. Hit Settings
-        EditorGUILayout.PropertyField(m_hasHitEffectProp, new GUIContent("Has Hit Effect"));
+        EditorGUILayout.PropertyField(m_hasHitEffectProp, new GUIContent("Is Hit Effect"));
         if (m_hasHitEffectProp.boolValue)
         {
             EditorGUI.indentLevel++;
