@@ -8,10 +8,13 @@ public class SkillEffectEditor : Editor
     private SerializedProperty m_projectilePrefabProp;
     private SerializedProperty m_projectileSpeedProp;
 
-    private SerializedProperty m_hasSurroundingEffectProp;
+    private SerializedProperty m_isDashProp;
+    private SerializedProperty m_DashSpeedProp;
+
+    private SerializedProperty m_isSurroundingEffectProp;
     private SerializedProperty m_surroundingEffectPrefabProp;
 
-    private SerializedProperty m_hasHitEffectProp;
+    private SerializedProperty m_isHitEffectProp;
     private SerializedProperty m_hitEffectPrefabProp;
 
     private void OnEnable()
@@ -20,10 +23,13 @@ public class SkillEffectEditor : Editor
         m_projectilePrefabProp = serializedObject.FindProperty("m_projectilePrefab");
         m_projectileSpeedProp = serializedObject.FindProperty("m_projectileSpeed");
 
-        m_hasSurroundingEffectProp = serializedObject.FindProperty("m_isSurroundingEffect");
+        m_isDashProp = serializedObject.FindProperty("m_isDash");
+        m_DashSpeedProp = serializedObject.FindProperty("m_dashSpeed");
+
+        m_isSurroundingEffectProp = serializedObject.FindProperty("m_isSurroundingEffect");
         m_surroundingEffectPrefabProp = serializedObject.FindProperty("m_surroundingEffectPrefab");
 
-        m_hasHitEffectProp = serializedObject.FindProperty("m_isHitEffect");
+        m_isHitEffectProp = serializedObject.FindProperty("m_isHitEffect");
         m_hitEffectPrefabProp = serializedObject.FindProperty("m_hitEffectPrefab");
     }
 
@@ -51,9 +57,20 @@ public class SkillEffectEditor : Editor
 
         EditorGUILayout.Space();
 
-        // 2. Surrounding Settings
-        EditorGUILayout.PropertyField(m_hasSurroundingEffectProp, new GUIContent("Is Surrounding Effect"));
-        if (m_hasSurroundingEffectProp.boolValue)
+        // 2. Projectile Settings
+        EditorGUILayout.PropertyField(m_isDashProp, new GUIContent("Is Dash"));
+        if (m_isDashProp.boolValue)
+        {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(m_DashSpeedProp, new GUIContent("Dash Speed"));
+            EditorGUI.indentLevel--;
+        }
+
+        EditorGUILayout.Space();
+
+        // 3. Surrounding Settings
+        EditorGUILayout.PropertyField(m_isSurroundingEffectProp, new GUIContent("Is Surrounding Effect"));
+        if (m_isSurroundingEffectProp.boolValue)
         {
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_surroundingEffectPrefabProp, new GUIContent("Surrounding Effect Prefab"));
@@ -62,9 +79,9 @@ public class SkillEffectEditor : Editor
 
         EditorGUILayout.Space();
 
-        // 3. Hit Settings
-        EditorGUILayout.PropertyField(m_hasHitEffectProp, new GUIContent("Is Hit Effect"));
-        if (m_hasHitEffectProp.boolValue)
+        // 4. Hit Settings
+        EditorGUILayout.PropertyField(m_isHitEffectProp, new GUIContent("Is Hit Effect"));
+        if (m_isHitEffectProp.boolValue)
         {
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_hitEffectPrefabProp, new GUIContent("Hit Effect Prefab"));

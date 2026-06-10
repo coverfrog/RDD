@@ -24,6 +24,24 @@ public class SkillEffect : ScriptableObject
      -----------------------------------------------------------------------------------------------------------------------
     */
 
+    [Tooltip("오브젝트에게 가속도를 줄지에 대한 여부 입니다.")]
+    [SerializeField] private bool m_isDash;
+
+    [Tooltip("오브젝트에 대한 가속도를 결정합니다.")]
+    [SerializeField] private float m_dashSpeed = 20f;
+
+    /*
+     -----------------------------------------------------------------------------------------------------------------------
+    */
+
+    public bool IsDash => m_isDash;
+
+    public float DashSpeed => m_dashSpeed;
+
+    /*
+     -----------------------------------------------------------------------------------------------------------------------
+    */
+
     [Tooltip("스킬 시전자 주변을 지속적으로 감싸는 연출(아우라, 보호막 등)을 사용할지 여부입니다.")]
     [SerializeField] private bool m_isSurroundingEffect;
 

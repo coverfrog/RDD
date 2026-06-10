@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkillInfo
   m_id: 1
   m_castingMode: 0
-  m_execute:
-    rid: -2
   m_levelDataList:
   - Level: 1
     Damage: 0
@@ -25,8 +23,3 @@ MonoBehaviour:
     Damage: 0
     Duration: 0.1
     m_skillEffect: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
